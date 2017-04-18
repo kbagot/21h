@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/11 14:55:34 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/18 20:16:52 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 # include <paths.h>
 # include <limits.h>
 # include <sys/stat.h>
+# include <curses.h>// care order
+# include <term.h>//
+# include <termcap.h>
+# include <termios.h>
+# include <sys/ioctl.h>
 
 typedef struct		s_env
 {
@@ -49,5 +54,6 @@ void				destroy_env(t_env **env);
 void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
+char				*termcap(char *stin);
 
 #endif

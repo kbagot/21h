@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/11 14:42:06 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/18 20:16:50 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,32 +75,44 @@ static void		set(char **str, t_env *env)
 	}
 }
 
-static void		show_prompt(t_env *s_env, t_data *data)
+void		show_prompt(t_env *s_env, t_data *data)
 {
 	char	*stin;
 	char	**cstin;
 	t_env	*search;
 	int		ret;
+	char	**septin;
+	int		i;
+	struct termios term;
 
 	stin = NULL;
 	ret = 1;
+	tcgetattr(0, &term);
+	term.c_lflag &= ~(ECHO | ICANON);
+	term.c_cc[VTIME] = 0;
+	term.c_cc[VMIN] = 1;
+	tcsetattr(0, TCSADRAIN, &term);
 	while (ret == 1)
 	{
+		i = 0;
 		if ((search = search_env(s_env, "PWD")) &&
 				ft_strchr(search->value, '/'))
 			ft_printf("\033[0;36m[%s]> \033[0m",
 					&(ft_strrchr(search->value, '/')[1]));
 		else
 			ft_printf("\033[0;36m[]> \033[0m");
-		ret = get_next_line(0, &stin);
-		if (stin)
+		stin = termcap(stin);
+		septin = ft_strsplit(stin, ';');//use stin fot history
+		while (stin && septin[i])
 		{
-			cstin = strmsplit(stin, " \t\n");
+			cstin = strmsplit(septin[i], " \t\n");
 			set(cstin, s_env);
-			parse_entry(&s_env, cstin, stin, data);
-			ft_strdel(&stin);
+			parse_entry(&s_env, cstin, septin[i], data);
 			ft_tabdel(cstin);
+			i++;
 		}
+		ft_tabdel(septin);
+		ft_strdel(&stin);
 	}
 }
 
@@ -113,6 +125,9 @@ int				main(int ac, char **av, char **env)
 
 	data = ft_memalloc(sizeof(t_data));
 	data->rvalue = 0;
+	char t_buff[1024];
+	int resl;
+	resl = tgetent(t_buff, getenv("TERM"));
 	if (ac == 1)
 	{
 		av = NULL;
