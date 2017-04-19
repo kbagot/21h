@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/18 20:16:52 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/19 18:09:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 
+# define INIT 1
+# define RESTORE 2
+
 typedef struct		s_env
 {
 	char			*name;
@@ -33,7 +36,15 @@ typedef struct		s_env
 typedef struct		s_data
 {
 	int				rvalue;
+	struct s_hist	*hist;
 }					t_data;
+
+typedef struct		s_hist
+{
+	char			*elem;
+	struct s_hist	*next;
+	struct s_hist	*before;
+}					t_hist;
 
 void				parse_entry(t_env **s_env, char **cstin, char *stin,
 		t_data *data);
@@ -54,6 +65,7 @@ void				destroy_env(t_env **env);
 void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
-char				*termcap(char *stin);
+char				*termcap(char *stin, t_data *data);
+void				init_term(int act);
 
 #endif

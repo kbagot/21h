@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/07 12:32:55 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/19 18:09:02 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ static int	exec_exit(char **cstin, t_data *data, char *stin)
 	ft_strdel(&stin);
 	s = data->rvalue;
 	free(data);
+	init_term(RESTORE);
 	exit(s);
 	return (1);
 }
@@ -75,6 +76,23 @@ static int	exec_env(char **cstin, t_env **env)
 	return (1);
 }
 
+static int	exec_history(t_data *data)
+{
+	t_hist	*cursor;
+	int		i;
+
+	i = 0;	
+	cursor = data->hist;
+	while (cursor->before)
+		cursor = cursor->before;
+	while (cursor)
+	{
+		ft_printf("[%d] %s\n", i++, cursor->elem);
+		cursor = cursor->next;
+	}
+	return (1);
+}
+
 int			builtin(char **cstin, t_env **env, char *stin, t_data *data)
 {
 	if (cstin[0] && (ft_strcmp(cstin[0], "exit") == 0))
@@ -89,5 +107,7 @@ int			builtin(char **cstin, t_env **env, char *stin, t_data *data)
 	else if (cstin[0] && ((ft_strcmp(cstin[0], "setenv") == 0) ||
 				ft_strcmp(cstin[0], "unsetenv") == 0))
 		return (exec_env(cstin, env));
+	else if (cstin[0] && (ft_strcmp(cstin[0], "history") == 0))
+		return (exec_history(data));
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/18 20:16:50 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/19 18:22:18 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,11 @@ void		show_prompt(t_env *s_env, t_data *data)
 	char	*stin;
 	char	**cstin;
 	t_env	*search;
-	int		ret;
 	char	**septin;
 	int		i;
-	struct termios term;
 
 	stin = NULL;
-	ret = 1;
-	tcgetattr(0, &term);
-	term.c_lflag &= ~(ECHO | ICANON);
-	term.c_cc[VTIME] = 0;
-	term.c_cc[VMIN] = 1;
-	tcsetattr(0, TCSADRAIN, &term);
-	while (ret == 1)
+	while (42)
 	{
 		i = 0;
 		if ((search = search_env(s_env, "PWD")) &&
@@ -101,7 +93,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 					&(ft_strrchr(search->value, '/')[1]));
 		else
 			ft_printf("\033[0;36m[]> \033[0m");
-		stin = termcap(stin);
+		stin = termcap(stin, data);
 		septin = ft_strsplit(stin, ';');//use stin fot history
 		while (stin && septin[i])
 		{
@@ -125,9 +117,8 @@ int				main(int ac, char **av, char **env)
 
 	data = ft_memalloc(sizeof(t_data));
 	data->rvalue = 0;
-	char t_buff[1024];
-	int resl;
-	resl = tgetent(t_buff, getenv("TERM"));
+	data->hist = NULL;
+	init_term(INIT);
 	if (ac == 1)
 	{
 		av = NULL;
@@ -144,5 +135,6 @@ int				main(int ac, char **av, char **env)
 	else
 		ft_putstr_fd("minishell: can't open input file\n", 2);
 	destroy_env(&s_env);
+	init_term(RESTORE);
 	return (data->rvalue);
 }
