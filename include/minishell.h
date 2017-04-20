@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/19 18:09:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/20 14:24:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ void				destroy_env(t_env **env);
 void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
-char				*termcap(char *stin, t_data *data);
+char				*termcap(t_data *data);
 void				init_term(int act);
 
 #endif

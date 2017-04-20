@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/19 18:22:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/20 20:29:24 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 					&(ft_strrchr(search->value, '/')[1]));
 		else
 			ft_printf("\033[0;36m[]> \033[0m");
-		stin = termcap(stin, data);
+		stin = termcap(data);
 		septin = ft_strsplit(stin, ';');//use stin fot history
 		while (stin && septin[i])
 		{
