@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/20 20:30:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/21 15:23:16 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,16 +37,18 @@ static int	exec_exit(char **cstin, t_data *data, char *stin)
 	free(data);
 	while (data->hist->next)
 		data->hist = data->hist->next;
-	while (data->hist->before)
+/*	while (data->hist->before)
 	{
 		data->hist = data->hist->before;
 		ft_strdel(&data->hist->next->elem);
 		if (data->hist->next)
 			free(data->hist->next);
 	}
-	ft_strdel(&data->hist->elem);
 	if (data->hist)
+	{	
+		ft_strdel(&data->hist->elem);
 		free(data->hist);
+	}*/
 	init_term(RESTORE);
 	exit(s);
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/20 14:24:23 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/21 20:56:48 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct		s_data
 {
 	int				rvalue;
 	struct s_hist	*hist;
+	int				cursor;
+	char			*clipboard;
 }					t_data;
 
 typedef struct		s_hist
@@ -65,7 +67,9 @@ void				destroy_env(t_env **env);
 void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
-char				*termcap(t_data *data);
+char				*line_edit(t_data *data);
 void				init_term(int act);
+void				arrow_key(t_data *data, char **stin, char *buff);
+int					print(int c);
 
 #endif
