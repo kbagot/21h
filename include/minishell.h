@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/21 20:56:48 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/25 18:31:33 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,6 @@ char				*line_edit(t_data *data);
 void				init_term(int act);
 void				arrow_key(t_data *data, char **stin, char *buff);
 int					print(int c);
+void				copy_cut(t_data *data, char **stin, char *buff);
 
 #endif

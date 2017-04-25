@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/15 16:14:06 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/24 21:14:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/25 18:47:10 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char		*line_edit(t_data *data)
 	char	*stin;
 
 	stin = NULL;
-	buff = ft_strnew(4);
+	buff = ft_strnew(6);
 	tputs(tgetstr("im", NULL), 1, print);
 	tputs(tgetstr("sc", NULL), 1, print);
 	data->cursor = 0;
@@ -120,61 +120,16 @@ char		*line_edit(t_data *data)
 		//		}
 		//ENTER CLIP MODE
 		else if (buff[0] == 9 && buff[1] == 0)//copy mode //cut mode  CTRL + I
-		{
-			int ce;
-
-			tputs(tgetstr("so", NULL), 1, print);
-			ce = data->cursor;
-			while (42)
-			{
-				ft_bzero(buff, 6);
-				read(0, buff, 5);
-				if (buff[0] == 27 && buff[1] == 91)//arrow
-				{
-					if (data->cursor >= 0 && data->cursor < (int)ft_strlen(stin))
-					{
-						tputs(tgetstr("ei", NULL), 1, print);
-						ft_putchar(stin[data->cursor]);
-						tputs(tgetstr("le", NULL), 1, print);
-						tputs(tgetstr("im", NULL), 1, print);
-					}
-					arrow_key(data, &stin, buff);
-				}
-				else if (buff[0] == 1 || buff[0] == 4)//alt +left  WORD MOVE ctrl + A
-					move_by_word(data, stin, buff);
-				else if (buff[0] == 21 && buff[1] == 0)// copy  |   CTRL + U 
-				{
-					if (ce >= data->cursor)
-						data->clipboard = ft_strsub(stin, data->cursor, ce);
-					else if (ce < data->cursor)
-						data->clipboard = ft_strsub(stin, ce, data->cursor);
-					break;
-				}
-				else if (buff[0] == 11 && buff[1] == 0)// cut       |      CTRL + K
-				{
-					if (ce >= data->cursor)
-					{
-						data->clipboard = ft_strsub(stin, data->cursor, ce);
-						stin = ft_strjoin(ft_strsub(stin, 0, data->cursor), &stin[ce]); //stin leaks
-					}
-					else if (ce < data->cursor)
-					{
-						data->clipboard = ft_strsub(stin, ce, data->cursor);
-						stin = ft_strjoin(ft_strsub(stin, 0, ce), &stin[data->cursor + 1]); //stin leaks
-					}
-					break;
-				}
-				else if (buff[0] == 27 && buff[1] == 0)//echap
-					break;
-			}
-			tputs(tgetstr("se", NULL), 1, print);
-		}
+			copy_cut(data, &stin, buff);
 		else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
 		{
-			ft_printf("%s", data->clipboard);
-			stin = ft_strjoin(ft_strjoin(ft_strsub(stin, 0, data->cursor - 1), data->clipboard),
-					&stin[data->cursor]); //stin leaks
-			data->cursor += ft_strlen(data->clipboard);
+			if (data->clipboard)
+			{
+				ft_printf("%s", data->clipboard);
+				stin = ft_strjoin(ft_strjoin(ft_strsub(stin, 0, data->cursor), data->clipboard),
+						&stin[data->cursor]); //stin leaks
+				data->cursor += ft_strlen(data->clipboard);
+			}
 		}
 		else if (buff[0] == 12)
 		{
