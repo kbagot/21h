@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/15 16:14:06 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/25 18:47:10 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:56:13 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,19 @@ int	print(int c)
 
 static char	*delete_one(char *stin, t_data *data)
 {
+	char *tmp;
+	char *old;
+
+	old = stin;
 	if (data->cursor== (int)ft_strlen(stin))
 		stin[data->cursor - 1] = '\0';
 	else
-		stin = ft_strjoin(ft_strsub(stin, 0, data->cursor - 1), &stin[data->cursor]); //stin leaks
-	//	printf("[%d] | [%s]", data->cursor, stin);
+	{
+		tmp = ft_strsub(stin, 0, data->cursor - 1);
+		stin = ft_strjoin(tmp, &stin[data->cursor]); //stin leaks
+		ft_strdel(&old);
+		ft_strdel(&tmp);
+	}
 	return (stin);
 }
 
@@ -32,7 +40,6 @@ static void	add_history(char *cmd, t_data *data)
 {
 	if (cmd && data->hist == NULL)
 	{
-		//		ft_printf("salut1\n");
 		data->hist = ft_memalloc(sizeof(t_hist));
 		data->hist->elem = ft_strdup(cmd);
 		data->hist->next = NULL;
@@ -40,7 +47,6 @@ static void	add_history(char *cmd, t_data *data)
 	}
 	else if (cmd && data->hist)
 	{
-		//	ft_printf("salut2\n");
 		while (data->hist->next)
 			data->hist = data->hist->next;
 		data->hist->next = ft_memalloc(sizeof(t_hist));
@@ -51,46 +57,13 @@ static void	add_history(char *cmd, t_data *data)
 	}
 }
 
-static void	word_left(t_data *data, char *stin)
+static void	end_line(t_data *data, char *stin, char *buff)
 {
-	if ((data->cursor > 0 && ft_isspace(stin[data->cursor - 1]) &&
-				stin[data->cursor] > 32) || !stin[data->cursor])
-	{
-		tputs(tgetstr("le", NULL), 1, print);
-		data->cursor--;
-	}
-	while (stin[data->cursor] && data->cursor > 0)
-	{
-		if (ft_isspace(stin[data->cursor - 1]) && stin[data->cursor] > 32)
-			break;
-		tputs(tgetstr("le", NULL), 1, print);
-		data->cursor--;
-	}
-}
-
-static void	word_right(t_data *data, char *stin)
-{
-	if ((data->cursor == 0 || ft_isspace(stin[data->cursor - 1])) &&
-			stin[data->cursor] > 32)
-	{
-		tputs(tgetstr("nd", NULL), 1, print);
-		data->cursor++;
-	}
-	while (stin[data->cursor] && data->cursor > 0)
-	{
-		if (ft_isspace(stin[data->cursor - 1]) && stin[data->cursor] > 32)
-			break;
-		tputs(tgetstr("nd", NULL), 1, print);
-		data->cursor++;
-	}
-}
-
-static void	move_by_word(t_data *data, char *stin, char *buff)
-{
-	if (buff[0] == 1 && stin && data->cursor > 0)
-		word_left(data, stin);
-	else if (buff[0] == 4 && stin)//alt +right  ctrl + D
-		word_right(data, stin);
+	tputs(tgetstr("do", NULL), 1, print);
+	add_history(stin, data);
+	tputs(tgetstr("ei", NULL), 1, print);
+	ft_strdel(&buff);
+	reset_term();
 }
 
 char		*line_edit(t_data *data)
@@ -103,52 +76,41 @@ char		*line_edit(t_data *data)
 	tputs(tgetstr("im", NULL), 1, print);
 	tputs(tgetstr("sc", NULL), 1, print);
 	data->cursor = 0;
-	while (1)  // need \n
+	init_term();
+	while (42)  // need \n
 	{
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-	//	ft_printf("lol : %d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
+		///	ft_printf("lol : %d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
-		else if (buff[0] == 1 || buff[0] == 4)//alt +left  WORD MOVE ctrl + A
+		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
 			move_by_word(data, stin, buff);
-		//		else if (buff[0] == 3)//ctrl + d   now ctrl+ C
-		//		{
-		//			init_term(RESTORE);
-		//			tputs(tgetstr("ei", NULL), 1, print);
-		//			exit(0);
-		//		}
-		//ENTER CLIP MODE
+		else if (buff[0] == 4)//ctrl + d   now ctrl+ C  [make exit]
+		{
+			ft_strdel(&stin);
+			stin = ft_strdup("exit");
+			end_line(data, stin, buff);
+			return (stin);
+		}
 		else if (buff[0] == 9 && buff[1] == 0)//copy mode //cut mode  CTRL + I
 			copy_cut(data, &stin, buff);
 		else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
-		{
-			if (data->clipboard)
-			{
-				ft_printf("%s", data->clipboard);
-				stin = ft_strjoin(ft_strjoin(ft_strsub(stin, 0, data->cursor), data->clipboard),
-						&stin[data->cursor]); //stin leaks
-				data->cursor += ft_strlen(data->clipboard);
-			}
-		}
-		else if (buff[0] == 12)
+			paste(data, &stin);
+		else if (buff[0] == 12)  // CTRL+L CLEAR
 		{
 			tputs(tgetstr("cl", NULL), 1, print);
 			data->cursor = 0;
 		}
 		else if (buff[0] == 10) // send
 		{
-			tputs(tgetstr("do", NULL), 1, print);
-			add_history(stin, data);
-			tputs(tgetstr("ei", NULL), 1, print);
-			ft_strdel(&buff);
+			end_line(data, stin, buff);
 			return (stin);
 		}
 		else if (buff[0] == 127)
-		{		//	ft_printf("%c", buff[0]);
+		{
 			if (data->cursor > 0)
 			{
-				// 		printf("salut\n");
 				stin = delete_one(stin, data);
 				tputs(tgetstr("le", NULL), 1, print);
 				tputs(tgetstr("dc", NULL), 1, print);
@@ -156,22 +118,10 @@ char		*line_edit(t_data *data)
 			}
 		}
 		else if (ft_isprint(buff[0]) && buff[1] == '\0')//maybe allow only printable
-		{
-			//	printf("l\n");
-			if (stin == NULL)
-				stin = ft_strdup(buff);
-			else if (data->cursor == (int)ft_strlen(stin)) // maybe -1
-				stin = ft_strjoin(stin, buff);  //stin leaks
-			else
-				stin = join(ft_strsub(stin, 0, data->cursor), buff, &stin[data->cursor]); //stin leaks
-			if (buff[0] == 9)
-				buff[0] = 32;
-			ft_putchar(buff[0]);
-			data->cursor++;
-		}
-		//	printf("%s\n", stin);
+			writer(data, &stin, buff);
 	}
 	ft_strdel(&buff);
 	tputs(tgetstr("ei", NULL), 1, print);
+	reset_term();
 	return (stin);
 }

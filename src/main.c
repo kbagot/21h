@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/21 20:56:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:12:21 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,6 @@ int				main(int ac, char **av, char **env)
 	data = ft_memalloc(sizeof(t_data));
 	data->rvalue = 0;
 	data->hist = NULL;
-	init_term(INIT);
 	if (ac == 1)
 	{
 		av = NULL;
@@ -135,6 +134,5 @@ int				main(int ac, char **av, char **env)
 	else
 		ft_putstr_fd("minishell: can't open input file\n", 2);
 	destroy_env(&s_env);
-	init_term(RESTORE);
 	return (data->rvalue);
 }

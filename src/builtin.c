@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/21 15:23:16 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:12:54 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ static int	exec_exit(char **cstin, t_data *data, char *stin)
 		ft_strdel(&data->hist->elem);
 		free(data->hist);
 	}*/
-	init_term(RESTORE);
 	exit(s);
 	return (1);
 }

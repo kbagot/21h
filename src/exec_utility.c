@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/19 12:46:27 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:12:43 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 		if (execve(stin[0], stin, env) == -1)
 		{
 			ft_putstr_fd("Exec format error\n", 2);
-			init_term(RESTORE);
 			exit(1);
 		}
 	}

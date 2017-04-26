@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/25 18:47:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:56:19 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	cut(t_data *data, char **stin, int ce)
 	char *tmp;
 
 	tmp = *stin;
-	ft_strdel(&data->clipboard);
+	ft_strdel(&data->clipboard);//check if good free
 	if (ce >= data->cursor)
 	{
 		data->clipboard = ft_strsub(*stin, data->cursor, ce - data->cursor + 1);
@@ -52,7 +52,7 @@ static void	cut(t_data *data, char **stin, int ce)
 	ft_strdel(&tmp);
 }
 
-static void	reset_term(t_data *data, char *stin)
+static void	reset_line(t_data *data, char *stin)
 {
 	tputs(tgetstr("rc", NULL), 1, print);
 	tputs(tgetstr("ce", NULL), 1, print);
@@ -86,5 +86,5 @@ void		copy_cut(t_data *data, char **stin, char *buff)
 		else if (buff[0] == 27 && buff[1] == 0)//echap
 			break;
 	}
-	reset_term(data, *stin);
+	reset_line(data, *stin);
 }

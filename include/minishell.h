@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:14:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/25 18:31:33 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/26 18:56:15 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,6 @@
 # include <termcap.h>
 # include <termios.h>
 # include <sys/ioctl.h>
-
-# define INIT 1
-# define RESTORE 2
 
 typedef struct		s_env
 {
@@ -68,9 +65,13 @@ void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
 char				*line_edit(t_data *data);
-void				init_term(int act);
+void				init_term();
+void				reset_term();
 void				arrow_key(t_data *data, char **stin, char *buff);
 int					print(int c);
 void				copy_cut(t_data *data, char **stin, char *buff);
+void				writer(t_data *data, char **stin, char *buff);
+void				paste(t_data *data, char **stin);
+void				move_by_word(t_data *data, char *stin, char *buff);
 
 #endif
