@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/20 15:14:05 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/06 19:39:46 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/02 16:26:30 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 char		*join(char *s1, char *s2, char *s3)
 {

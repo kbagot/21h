@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 12:07:27 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/26 18:56:16 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/03 17:25:07 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
-void	init_term()
+void	init_term(void)
 {
 	int				ret;
 	char			t_buff[1024];
@@ -26,7 +26,7 @@ void	init_term()
 	tcsetattr(0, TCSADRAIN, &term);
 }
 
-void	reset_term()
+void	reset_term(void)
 {
 	int				ret;
 	char			t_buff[1024];

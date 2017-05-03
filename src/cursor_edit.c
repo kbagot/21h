@@ -6,16 +6,17 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 18:27:12 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/24 21:14:17 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/01 14:35:13 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static int	history_browsing(t_data *data, char **stin, char *buff)
 {
 	if (buff[2] == tgetstr("ku", NULL)[2] && data->hist)
 	{
+		ft_strdel(stin);
 		*stin = ft_strdup(data->hist->elem);
 		tputs(tgetstr("rc", NULL), 1, print);
 		tputs(tgetstr("ce", NULL), 1, print);
@@ -29,6 +30,7 @@ static int	history_browsing(t_data *data, char **stin, char *buff)
 	{
 		if (data->hist->next)
 		{
+			ft_strdel(stin);
 			*stin = ft_strdup(data->hist->next->elem);
 			tputs(tgetstr("rc", NULL), 1, print);
 			tputs(tgetstr("ce", NULL), 1, print);

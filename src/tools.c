@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/30 15:38:20 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/06 15:24:35 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 14:42:13 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 void	swap_dat(char **dat, int i)
 {

@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/29 19:41:17 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/07 12:25:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 14:41:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static void	print_env(t_env *tmp_env)
 {

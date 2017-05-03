@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/26 18:12:54 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/29 19:04:37 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static int	exec_exit(char **cstin, t_data *data, char *stin)
 {
@@ -34,10 +34,11 @@ static int	exec_exit(char **cstin, t_data *data, char *stin)
 	}
 	ft_strdel(&stin);
 	s = data->rvalue;
+/*	
 	free(data);
 	while (data->hist->next)
 		data->hist = data->hist->next;
-/*	while (data->hist->before)
+	while (data->hist->before)
 	{
 		data->hist = data->hist->before;
 		ft_strdel(&data->hist->next->elem);
@@ -94,7 +95,7 @@ static int	exec_history(t_data *data)
 	t_hist	*cursor;
 	int		i;
 
-	i = 0;	
+	i = 0;
 	cursor = data->hist;
 	while (cursor->before)
 		cursor = cursor->before;

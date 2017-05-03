@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/26 18:12:43 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/03 19:13:07 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static int	invalid_exec(char **stin, char **env, t_data *data)
 {
@@ -50,7 +50,6 @@ static void	sig(int rvalue, pid_t pid, char *stin)
 		ft_putchar_fd('\n', 2);
 	}
 }
-
 static void	exec_utility(char **env, char **stin, t_data *data)
 {
 	pid_t	pid;
@@ -64,7 +63,7 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 		if (execve(stin[0], stin, env) == -1)
 		{
 			ft_putstr_fd("Exec format error\n", 2);
-			exit(1);
+			_exit(1);
 		}
 	}
 	else if (pid > 0)
@@ -78,15 +77,136 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	ft_tabdel(env);
 }
 
+static int	find_pipe(char **cstin)
+{
+	int i;
+
+	i = 0;
+	while (cstin[i])
+	{
+		if (ft_strcmp(cstin[i], "|") == 0)
+			return (i);
+		i++;
+	}
+	return (i);
+}
+
+static t_line	*pipe_split(char **cstin)
+{
+	t_line *line;
+	int		i;
+	int		j;
+	t_line *save;
+
+	save = NULL;
+	i = 0;
+	while (cstin[i])
+	{
+		if (save == NULL)
+		{
+			line = ft_memalloc(sizeof(t_line));
+			save = line;
+		}
+		j = find_pipe(&cstin[i]);
+		line->proc = malloc(sizeof(char*) * j + 1);
+		j = 0;
+		while (cstin[i] && (ft_strcmp(cstin[i], "|") != 0))
+		{
+			line->proc[j] = ft_strdup(cstin[i]);
+			j++;
+			i++;
+			if (!cstin[i])
+				break ;
+		}
+		line->proc[j] = NULL;
+		line->next = NULL;
+		if (!cstin[i])
+			break ;
+		line->next = ft_memalloc(sizeof(t_line));
+		line = line->next;
+		i++;
+	}
+/*	while (save)
+	{
+	i = 0;
+		while (save->proc[i])
+		{
+			printf("[%s] ", save->proc[i]);
+			i++;
+		}
+		printf("\n");;
+		save  = save->next;
+	}*/
+	return (save);
+}
+
+static t_line	*fork_pipes(t_line *line, t_data *d)
+{
+	pid_t	pid;
+	int		fd[2];
+
+	d->in = 0;
+	while (line->next)
+	{
+		pipe(fd);
+		d->out = fd[1];
+		if ((pid = fork ()) == 0)
+		{
+			if (d->in != 0)
+			{
+				dup2 (d->in, 0);
+				close (d->in);
+			}
+			if (d->out != 1)
+			{
+				dup2 (d->out, 1);
+				close (d->out);
+			}
+		return (line);
+		}
+		else
+			wait(NULL);
+		close (d->out);
+		d->in = fd[0];
+		line = line->next;
+	}
+	if (d->in != 0)
+	{
+		d->save = dup(0);
+		dup2(d->in, 0);
+	}
+	return (line);
+}
+
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 {
 	t_env	*tmp_env;
+	t_line	*line;
 
+	data->in = 0;
+	data->out = 1;
+	line = pipe_split(cstin);
+	line = fork_pipes(line, data);
+	cstin = line->proc;
 	tmp_env = NULL;
 	if ((data->rvalue = builtin(cstin, s_env, stin, data)))
-		return ;
+	{
+		if (line->next)
+			exit(1);
+		else
+			return ;// exit if pipe
+	}
 	tmp_env = master_env(*s_env, cstin, tmp_env);
 	if ((cstin = utility(cstin, *s_env)))
 		exec_utility(list_to_tab(tmp_env), cstin, data);
 	destroy_env(&tmp_env);
+	//printf("s1\n");
+	if (line->next)
+		exit(1);
+	if (data->in != 0)
+	{
+		dup2(data->save, 0);
+		close(data->in);
+		close(data->save);
+	}
 }

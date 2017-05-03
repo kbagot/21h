@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 17:31:43 by kbagot            #+#    #+#             */
-/*   Updated: 2017/03/30 16:05:29 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 16:43:12 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static int	check_quote(char *stin)
 {

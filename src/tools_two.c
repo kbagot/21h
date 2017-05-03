@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/03 16:56:01 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/03 17:08:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 14:42:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 void	destroy_env(t_env **env)
 {

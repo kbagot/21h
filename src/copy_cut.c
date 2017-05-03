@@ -6,15 +6,15 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/26 18:56:19 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 19:22:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static void	standout_move(t_data *data, char *stin, char *buff)
 {
-	if (data->cursor >= 0 && data->cursor < (int)ft_strlen(stin))
+	if (stin && data->cursor >= 0 && data->cursor < (int)ft_strlen(stin))
 	{
 		tputs(tgetstr("ei", NULL), 1, print);
 		ft_putchar(stin[data->cursor]);
@@ -26,11 +26,15 @@ static void	standout_move(t_data *data, char *stin, char *buff)
 
 static void	copy(t_data *data, char *stin, int ce)
 {
-	ft_strdel(&data->clipboard);
-	if (ce >= data->cursor)
-		data->clipboard = ft_strsub(stin, data->cursor, ce - data->cursor + 1);
-	else if (ce < data->cursor)
-		data->clipboard = ft_strsub(stin, ce, data->cursor - ce + 1);
+	if (stin)
+	{
+		ft_strdel(&data->clipboard);
+		if (ce >= data->cursor)
+			data->clipboard = ft_strsub(stin, data->cursor,
+					ce - data->cursor + 1);
+		else if (ce < data->cursor)
+			data->clipboard = ft_strsub(stin, ce, data->cursor - ce + 1);
+	}
 }
 
 static void	cut(t_data *data, char **stin, int ce)
@@ -38,26 +42,33 @@ static void	cut(t_data *data, char **stin, int ce)
 	char *tmp;
 
 	tmp = *stin;
-	ft_strdel(&data->clipboard);//check if good free
-	if (ce >= data->cursor)
+	if (*stin)
 	{
-		data->clipboard = ft_strsub(*stin, data->cursor, ce - data->cursor + 1);
-		*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]); //stin leaks
+		ft_strdel(&data->clipboard);//check if good free
+		if (ce >= data->cursor)
+		{
+			data->clipboard = ft_strsub(*stin, data->cursor,
+					ce - data->cursor + 1);
+			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]); //stin leaks
+		}
+		else if (ce < data->cursor)
+		{
+			data->clipboard = ft_strsub(*stin, ce, data->cursor - ce + 1);
+			*stin = ft_strjoin(ft_strsub(tmp, 0, ce), &tmp[data->cursor]); //stin leaks
+		}
+		ft_strdel(&tmp);
 	}
-	else if (ce < data->cursor)
-	{
-		data->clipboard = ft_strsub(*stin, ce, data->cursor - ce + 1);
-		*stin = ft_strjoin(ft_strsub(tmp, 0, ce), &tmp[data->cursor]); //stin leaks
-	}
-	ft_strdel(&tmp);
 }
 
 static void	reset_line(t_data *data, char *stin)
 {
-	tputs(tgetstr("rc", NULL), 1, print);
-	tputs(tgetstr("ce", NULL), 1, print);
-	ft_printf("%s", stin);
-	data->cursor = ft_strlen(stin);
+	if (stin)
+	{
+		tputs(tgetstr("rc", NULL), 1, print);
+		tputs(tgetstr("ce", NULL), 1, print);
+		ft_printf("%s", stin);
+		data->cursor = ft_strlen(stin);
+	}
 	tputs(tgetstr("se", NULL), 1, print);
 }
 
@@ -76,15 +87,15 @@ void		copy_cut(t_data *data, char **stin, char *buff)
 		else if (buff[0] == 21 && buff[1] == 0)// copy  |   CTRL + U
 		{
 			copy(data, *stin, ce);
-			break;
+			break ;
 		}
 		else if (buff[0] == 11 && buff[1] == 0)// cut       |      CTRL + K
 		{
 			cut(data, stin, ce);
-			break;
+			break ;
 		}
 		else if (buff[0] == 27 && buff[1] == 0)//echap
-			break;
+			break ;
 	}
 	reset_line(data, *stin);
 }

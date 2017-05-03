@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/15 16:14:06 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/26 18:56:13 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/03 19:13:10 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 int	print(int c)
 {
@@ -60,11 +60,36 @@ static void	add_history(char *cmd, t_data *data)
 static void	end_line(t_data *data, char *stin, char *buff)
 {
 	tputs(tgetstr("do", NULL), 1, print);
+			tputs(tgetstr("ei", NULL), 1, print);
 	add_history(stin, data);
-	tputs(tgetstr("ei", NULL), 1, print);
 	ft_strdel(&buff);
 	reset_term();
 }
+
+static char	*conform(char *stin)
+{
+	int		i;
+	char	*tmp;
+
+	i = 0;
+	if (stin)
+		while (stin[i])
+		{
+			if (stin[i] == '|')
+			{
+				tmp = stin;
+				stin = join(ft_strsub(tmp, 0, i), " | ", &tmp[i + 1]);
+				ft_strdel(&tmp);
+				i += 3;
+			}
+			i++;
+		}
+	return (stin);
+}
+
+/*
+**ll
+*/
 
 char		*line_edit(t_data *data)
 {
@@ -90,6 +115,7 @@ char		*line_edit(t_data *data)
 		{
 			ft_strdel(&stin);
 			stin = ft_strdup("exit");
+			tputs(tgetstr("ei", NULL), 1, print);
 			end_line(data, stin, buff);
 			return (stin);
 		}
@@ -105,6 +131,7 @@ char		*line_edit(t_data *data)
 		else if (buff[0] == 10) // send
 		{
 			end_line(data, stin, buff);
+			stin = conform(stin);
 			return (stin);
 		}
 		else if (buff[0] == 127)

@@ -6,11 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/06 18:20:37 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/07 12:22:29 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/04/27 14:39:17 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/minishell.h"
+#include "sh.h"
 
 static void	up_pwd(t_env *pwd, t_env *oldpwd, char **cstin)
 {
