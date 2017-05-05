@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/29 19:41:17 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/27 14:41:06 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/04 19:38:45 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void		addtmp_env(char **cstin, char *add, t_env **tmp_env, int del)
 	}
 	else if (var)
 		add_env(*tmp_env, var);
-	ft_tabdel(var);
+	ft_tabdel(&var);
 	swap_dat(cstin, del);
 }
 
@@ -94,6 +94,6 @@ t_env		*master_env(t_env *s_env, char **cstin, t_env *tmp_env)
 		if (!cstin[0] || cstin[0] == NULL)
 			print_env(tmp_env);
 	}
-	ft_tabdel(var);
+	ft_tabdel(&var);
 	return (tmp_env);
 }

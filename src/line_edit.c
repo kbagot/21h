@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   termcap.c                                          :+:      :+:    :+:   */
+/*   line_edit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/04/15 16:14:06 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/03 19:13:10 by kbagot           ###   ########.fr       */
+/*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
+/*   Updated: 2017/05/05 18:31:16 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static void	add_history(char *cmd, t_data *data)
 static void	end_line(t_data *data, char *stin, char *buff)
 {
 	tputs(tgetstr("do", NULL), 1, print);
-			tputs(tgetstr("ei", NULL), 1, print);
+	tputs(tgetstr("ei", NULL), 1, print);
 	add_history(stin, data);
 	ft_strdel(&buff);
 	reset_term();
@@ -72,24 +72,23 @@ static char	*conform(char *stin)
 	char	*tmp;
 
 	i = 0;
-	if (stin)
-		while (stin[i])
+	while (stin && stin[i])
+	{
+		if (stin[i] == '|')
 		{
-			if (stin[i] == '|')
-			{
-				tmp = stin;
+			tmp = stin;
 				stin = join(ft_strsub(tmp, 0, i), " | ", &tmp[i + 1]);
-				ft_strdel(&tmp);
 				i += 3;
-			}
-			i++;
+				ft_strdel(&tmp);
 		}
+		i++;
+	}
 	return (stin);
 }
 
 /*
-**ll
-*/
+ **ll
+ */
 
 char		*line_edit(t_data *data)
 {
@@ -106,7 +105,7 @@ char		*line_edit(t_data *data)
 	{
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		///	ft_printf("lol : %d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
+		//	ft_printf("lol : %d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
@@ -119,7 +118,7 @@ char		*line_edit(t_data *data)
 			end_line(data, stin, buff);
 			return (stin);
 		}
-		else if (buff[0] == 9 && buff[1] == 0)//copy mode //cut mode  CTRL + I
+		else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)// c mode ctrl+u k
 			copy_cut(data, &stin, buff);
 		else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
 			paste(data, &stin);

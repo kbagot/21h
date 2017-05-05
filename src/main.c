@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/03 19:13:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/05 18:31:19 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,33 @@ static void		set(char **str, t_env *env)
 	}
 }
 
+static int	parse_error(char **stin)
+{
+	int		i;
+	int		j;
+	char	**tmp;
+
+	i = 0;
+	tmp = NULL;
+	while (stin && stin[i])
+	{
+		tmp = strmsplit(stin[i], " \t\n");
+		j = 0;
+		while (tmp[j])
+			j++;
+		if (ft_strcmp(tmp[0], "|") == 0 || (j > 0 &&
+					ft_strcmp(tmp[j - 1], "|") == 0))
+		{
+			ft_tabdel(&tmp);
+			ft_putstr_fd("21sh: parse error near `|'\n", 2);
+			return (0);
+		}
+		ft_tabdel(&tmp);
+		i++;
+	}
+	return (1);
+}
+
 void		show_prompt(t_env *s_env, t_data *data)
 {
 	char	*stin;
@@ -95,15 +122,18 @@ void		show_prompt(t_env *s_env, t_data *data)
 			ft_printf("\033[0;36m[]> \033[0m");
 		stin = line_edit(data);
 		septin = ft_strsplit(stin, ';');//use stin fot history
-		while (stin && septin[i])
+		if (parse_error(septin))
 		{
-			cstin = strmsplit(septin[i], " \t\n");
-			set(cstin, s_env);
-			parse_entry(&s_env, cstin, septin[i], data);
-			ft_tabdel(cstin);
-			i++;
+			while (stin && septin[i])
+			{
+				cstin = strmsplit(septin[i], " \t\n");
+				set(cstin, s_env);
+				parse_entry(&s_env, cstin, septin[i], data);
+				ft_tabdel(&cstin);
+				i++;
+			}
 		}
-		ft_tabdel(septin);
+		ft_tabdel(&septin);
 		ft_strdel(&stin);
 	}
 }

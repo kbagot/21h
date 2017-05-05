@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/03 19:13:07 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/05 18:31:20 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	invalid_exec(char **stin, char **env, t_data *data)
 {
 	if ((stin[0] && (access(stin[0], X_OK) == -1)) || !stin[0])
 	{
-		ft_tabdel(env);
+		ft_tabdel(&env);
 		if (stin[0])
 		{
 			ft_putstr_fd("minishell: command not found: ", 2);
@@ -74,7 +74,7 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 		else if (WIFSIGNALED(rvalue))
 			sig(rvalue, pid, stin[0]);
 	}
-	ft_tabdel(env);
+	ft_tabdel(&env);
 }
 
 static int	find_pipe(char **cstin)
@@ -108,7 +108,7 @@ static t_line	*pipe_split(char **cstin)
 			save = line;
 		}
 		j = find_pipe(&cstin[i]);
-		line->proc = malloc(sizeof(char*) * j + 1);
+		line->proc = (char**)malloc(sizeof(char*) * j + 1);
 		j = 0;
 		while (cstin[i] && (ft_strcmp(cstin[i], "|") != 0))
 		{
@@ -126,22 +126,12 @@ static t_line	*pipe_split(char **cstin)
 		line = line->next;
 		i++;
 	}
-/*	while (save)
-	{
-	i = 0;
-		while (save->proc[i])
-		{
-			printf("[%s] ", save->proc[i]);
-			i++;
-		}
-		printf("\n");;
-		save  = save->next;
-	}*/
 	return (save);
 }
 
 static t_line	*fork_pipes(t_line *line, t_data *d)
 {
+	t_line *old;
 	pid_t	pid;
 	int		fd[2];
 
@@ -168,7 +158,10 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 			wait(NULL);
 		close (d->out);
 		d->in = fd[0];
+		old = line;
 		line = line->next;
+		ft_tabdel(&old->proc);
+		free(old);
 	}
 	if (d->in != 0)
 	{
@@ -192,7 +185,7 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	if ((data->rvalue = builtin(cstin, s_env, stin, data)))
 	{
 		if (line->next)
-			exit(1);
+			exit(data->rvalue);
 		else
 			return ;// exit if pipe
 	}
@@ -200,9 +193,10 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	if ((cstin = utility(cstin, *s_env)))
 		exec_utility(list_to_tab(tmp_env), cstin, data);
 	destroy_env(&tmp_env);
-	//printf("s1\n");
 	if (line->next)
-		exit(1);
+		exit(data->rvalue);
+	ft_tabdel(&line->proc);
+	free(line);
 	if (data->in != 0)
 	{
 		dup2(data->save, 0);

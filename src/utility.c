@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/20 15:14:05 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/02 16:26:30 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/04 18:38:51 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ char		**utility(char **st, t_env *s_env)
 		{
 			ft_strdel(&st[0]);
 			st[0] = ft_strdup(path[i]);
-			ft_tabdel(path);
+			ft_tabdel(&path);
 			return (st);
 		}
 		i++;
 	}
-	ft_tabdel(path);
+	ft_tabdel(&path);
 	return (st);
 }
