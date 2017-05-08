@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/05 18:31:16 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/08 19:59:22 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,21 +66,33 @@ static void	end_line(t_data *data, char *stin, char *buff)
 	reset_term();
 }
 
-static char	*conform(char *stin)
+static void	make_conform(char **stin, int *i, int c, char *nst)
 {
-	int		i;
 	char	*tmp;
+
+	tmp = *stin;
+	*stin = join(ft_strsub(tmp, 0, *i), nst, &tmp[*i + c]);
+	ft_strdel(&tmp);
+	*i += ft_strlen(nst) - 1;
+}
+
+static char	*conform(char *stin)
+{//maybe some shit in it
+	int		i;
 
 	i = 0;
 	while (stin && stin[i])
 	{
 		if (stin[i] == '|')
-		{
-			tmp = stin;
-				stin = join(ft_strsub(tmp, 0, i), " | ", &tmp[i + 1]);
-				i += 3;
-				ft_strdel(&tmp);
-		}
+			make_conform(&stin, &i, 1, " | ");
+		else if (!ft_strncmp(&stin[i], ">>", 2))
+			make_conform(&stin, &i, 2, " >> ");
+		else if (!ft_strncmp(&stin[i], "<<" , 2))
+			make_conform(&stin, &i, 2, " << ");
+		else if (stin[i] == '<')
+			make_conform(&stin, &i, 1, " < ");
+		else if (stin[i] == '>')
+			make_conform(&stin, &i, 1, " > ");
 		i++;
 	}
 	return (stin);
@@ -97,24 +109,23 @@ char		*line_edit(t_data *data)
 
 	stin = NULL;
 	buff = ft_strnew(6);
-	tputs(tgetstr("im", NULL), 1, print);
-	tputs(tgetstr("sc", NULL), 1, print);
 	data->cursor = 0;
 	init_term();
+	tputs(tgetstr("im", NULL), 1, print);
+	tputs(tgetstr("sc", NULL), 1, print);
 	while (42)  // need \n
 	{
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		//	ft_printf("lol : %d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
+	//		ft_printf("%d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
 			move_by_word(data, stin, buff);
-		else if (buff[0] == 4)//ctrl + d   now ctrl+ C  [make exit]
+		else if (buff[0] == 4)//ctrl + d [make exit]
 		{
 			ft_strdel(&stin);
 			stin = ft_strdup("exit");
-			tputs(tgetstr("ei", NULL), 1, print);
 			end_line(data, stin, buff);
 			return (stin);
 		}
@@ -131,6 +142,7 @@ char		*line_edit(t_data *data)
 		{
 			end_line(data, stin, buff);
 			stin = conform(stin);
+	//		printf("%s\n", stin);
 			return (stin);
 		}
 		else if (buff[0] == 127)
@@ -146,8 +158,6 @@ char		*line_edit(t_data *data)
 		else if (ft_isprint(buff[0]) && buff[1] == '\0')//maybe allow only printable
 			writer(data, &stin, buff);
 	}
-	ft_strdel(&buff);
-	tputs(tgetstr("ei", NULL), 1, print);
-	reset_term();
+	end_line(data, stin, buff);
 	return (stin);
 }

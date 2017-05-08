@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/26 17:39:59 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/27 19:45:22 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/08 14:09:51 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ static void	word_right(t_data *data, char *stin)
 		tputs(tgetstr("nd", NULL), 1, print);
 		data->cursor++;
 	}
-	while (stin[data->cursor] && data->cursor > 0)
+	while (stin[data->cursor] && data->cursor < (int)ft_strlen(stin))
 	{
 		if (ft_isspace(stin[data->cursor - 1]) && stin[data->cursor] > 32)
 			break ;

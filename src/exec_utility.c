@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/05 18:31:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/08 19:59:20 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,9 +110,14 @@ static t_line	*pipe_split(char **cstin)
 		j = find_pipe(&cstin[i]);
 		line->proc = (char**)malloc(sizeof(char*) * j + 1);
 		j = 0;
+		line->redirect = NULL;
 		while (cstin[i] && (ft_strcmp(cstin[i], "|") != 0))
-		{
-			line->proc[j] = ft_strdup(cstin[i]);
+		{//add redirect cmd
+			if (!ft_strcmp(cstin[i], ">") || !ft_strcmp(cstin[i], "<")
+				|| !ft_strcmp(cstin[i], ">>") || !ft_strcmp(cstin[i], "<<"))
+			line->redirect = ft_strdup(cstin[i]);
+			else
+				line->proc[j] = ft_strdup(cstin[i]);
 			j++;
 			i++;
 			if (!cstin[i])
