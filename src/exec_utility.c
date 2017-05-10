@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/08 19:59:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/10 20:35:33 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,18 +77,20 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	ft_tabdel(&env);
 }
 
-static int	find_pipe(char **cstin)
+static void		find_pipe(char **cstin, int *j, int *k)
 {
 	int i;
 
 	i = 0;
-	while (cstin[i])
+	while (cstin[i] && ft_strcmp(cstin[i], "|") != 0)
 	{
-		if (ft_strcmp(cstin[i], "|") == 0)
-			return (i);
+		if (ft_strchr(cstin[i], '>') || ft_strchr(cstin[i], '<'))
+		*k += 1;
+		else
+			*j += 1;
 		i++;
 	}
-	return (i);
+//	printf("[%d]  [%d]\n", *j, *k);
 }
 
 static t_line	*pipe_split(char **cstin)
@@ -96,10 +98,13 @@ static t_line	*pipe_split(char **cstin)
 	t_line *line;
 	int		i;
 	int		j;
+	int		k;
 	t_line *save;
 
 	save = NULL;
 	i = 0;
+	j = 0;
+	k = 0;
 	while (cstin[i])
 	{
 		if (save == NULL)
@@ -107,22 +112,36 @@ static t_line	*pipe_split(char **cstin)
 			line = ft_memalloc(sizeof(t_line));
 			save = line;
 		}
-		j = find_pipe(&cstin[i]);
+		find_pipe(&cstin[i], &j, &k);
 		line->proc = (char**)malloc(sizeof(char*) * j + 1);
+		line->redirect = (char**)malloc(sizeof(char*) * k + 1);
 		j = 0;
-		line->redirect = NULL;
+		k = 0;
 		while (cstin[i] && (ft_strcmp(cstin[i], "|") != 0))
 		{//add redirect cmd
-			if (!ft_strcmp(cstin[i], ">") || !ft_strcmp(cstin[i], "<")
-				|| !ft_strcmp(cstin[i], ">>") || !ft_strcmp(cstin[i], "<<"))
-			line->redirect = ft_strdup(cstin[i]);
+			char *c;
+			if ((c = ft_strchr(cstin[i], '>')) || (c = ft_strchr(cstin[i], '<')))
+			{
+		//		if (cstin[i][0] != '>' && cstin[i][0] != '<')
+		//		printf("%ld----- %ld\n", (long int )c, (long int)cstin[i]);
+				if (c == cstin[i])
+				{
+				line->redirect[k++] = join(ft_strdup(cstin[i]), " ", cstin[i + 1]);
+				}
+				else
+				{
+					printf("[%c]\n", cstin[i][c - cstin[i]]);
+					
+				}
+				i++;
+			}
 			else
-				line->proc[j] = ft_strdup(cstin[i]);
-			j++;
-			i++;
+				line->proc[j++] = ft_strdup(cstin[i]);
 			if (!cstin[i])
 				break ;
+			i++;
 		}
+		line->redirect[k] = NULL;
 		line->proc[j] = NULL;
 		line->next = NULL;
 		if (!cstin[i])
@@ -201,6 +220,7 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	if (line->next)
 		exit(data->rvalue);
 	ft_tabdel(&line->proc);
+	ft_tabdel(&line->redirect);
 	free(line);
 	if (data->in != 0)
 	{

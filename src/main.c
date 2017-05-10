@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/05 18:31:19 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/10 20:35:34 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,48 @@ static void		set(char **str, t_env *env)
 	}
 }
 
-static int	parse_error(char **stin)
+static int	parse_token(char **stin)
 {
+	int i;
+	char *c;
+
+	i = 0;
+	while (stin[i])
+	{
+		if ((c = ft_strchr(stin[i], '&')) && !stin[i + 1])
+		{
+			ft_putstr_fd("21sh: syntax error near unexpected token `newline'\n", 2);
+			return (1);
+		}
+		else if (!ft_strcmp(stin[i], "&"))
+		{
+			ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
+			return (1);
+		}
+		else if ((c = ft_strchr(stin[i], '&')))
+		{
+			int j = 0;
+			while (stin[i][j])
+			{
+				if (stin[i][j] == '&')
+				{
+					if (j == 0)
+			{ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
+			return (1);}
+					else if (stin[i][j - 1] != '>' && stin[i][j - 1] != '<')
+			{ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
+			return (1);}
+				}
+				j++;
+			}
+		}
+		i++;
+	}
+	return (0);
+}
+
+static int	parse_error(char **stin)
+{//TOKEN
 	int		i;
 	int		j;
 	char	**tmp;
@@ -87,13 +127,16 @@ static int	parse_error(char **stin)
 	{
 		tmp = strmsplit(stin[i], " \t\n");
 		j = 0;
+		if (parse_token(tmp))
+			{ft_tabdel(&tmp);
+			return (0);}
 		while (tmp[j])
 			j++;
 		if (ft_strcmp(tmp[0], "|") == 0 || (j > 0 &&
 					ft_strcmp(tmp[j - 1], "|") == 0))
 		{
 			ft_tabdel(&tmp);
-			ft_putstr_fd("21sh: parse error near `|'\n", 2);
+			ft_putstr_fd("21sh: error near unexpected token `|'\n", 2);
 			return (0);
 		}
 		ft_tabdel(&tmp);
@@ -122,7 +165,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 			ft_printf("\033[0;36m[]> \033[0m");
 		stin = line_edit(data);
 		septin = ft_strsplit(stin, ';');//use stin fot history
-		if (parse_error(septin))
+		if (parse_error(septin)) // token
 		{
 			while (stin && septin[i])
 			{

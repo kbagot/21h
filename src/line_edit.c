@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/08 19:59:22 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/10 20:35:36 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,19 @@ static char	*conform(char *stin)
 
 	i = 0;
 	while (stin && stin[i])
-	{
+	{// add a if in quote or not
 		if (stin[i] == '|')
 			make_conform(&stin, &i, 1, " | ");
-		else if (!ft_strncmp(&stin[i], ">>", 2))
-			make_conform(&stin, &i, 2, " >> ");
-		else if (!ft_strncmp(&stin[i], "<<" , 2))
-			make_conform(&stin, &i, 2, " << ");
-		else if (stin[i] == '<')
-			make_conform(&stin, &i, 1, " < ");
-		else if (stin[i] == '>')
-			make_conform(&stin, &i, 1, " > ");
+		else if (stin[i] == '&')
+			make_conform(&stin, &i, 1, "& ");
+		else if (!ft_strncmp(&stin[i], ">>", 2) && ft_strncmp(&stin[i], ">>&", 3))
+			make_conform(&stin, &i, 2, ">> ");
+		else if (!ft_strncmp(&stin[i], "<<", 2) && ft_strncmp(&stin[i], "<<&", 3))
+			make_conform(&stin, &i, 2, "<< ");
+		else if (!ft_strncmp(&stin[i], ">", 1) && ft_strncmp(&stin[i], ">&", 2))
+			make_conform(&stin, &i, 1, "> ");
+		else if (!ft_strncmp(&stin[i], "<", 1) && ft_strncmp(&stin[i], "<&", 2))
+			make_conform(&stin, &i, 1, "< ");
 		i++;
 	}
 	return (stin);
@@ -100,7 +102,7 @@ static char	*conform(char *stin)
 
 /*
  **ll
- */
+*/
 
 char		*line_edit(t_data *data)
 {
@@ -142,7 +144,7 @@ char		*line_edit(t_data *data)
 		{
 			end_line(data, stin, buff);
 			stin = conform(stin);
-	//		printf("%s\n", stin);
+			printf("%s\n", stin);
 			return (stin);
 		}
 		else if (buff[0] == 127)
