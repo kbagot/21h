@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/10 20:35:36 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/12 20:01:04 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ char		*line_edit(t_data *data)
 		{
 			end_line(data, stin, buff);
 			stin = conform(stin);
-			printf("%s\n", stin);
+			//printf("%s\n", stin);
 			return (stin);
 		}
 		else if (buff[0] == 127)

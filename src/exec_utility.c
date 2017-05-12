@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/10 20:35:33 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/12 20:00:58 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,12 +85,12 @@ static void		find_pipe(char **cstin, int *j, int *k)
 	while (cstin[i] && ft_strcmp(cstin[i], "|") != 0)
 	{
 		if (ft_strchr(cstin[i], '>') || ft_strchr(cstin[i], '<'))
-		*k += 1;
+			*k += 1;
 		else
 			*j += 1;
 		i++;
 	}
-//	printf("[%d]  [%d]\n", *j, *k);
+	//	printf("[%d]  [%d]\n", *j, *k);
 }
 
 static t_line	*pipe_split(char **cstin)
@@ -122,16 +122,35 @@ static t_line	*pipe_split(char **cstin)
 			char *c;
 			if ((c = ft_strchr(cstin[i], '>')) || (c = ft_strchr(cstin[i], '<')))
 			{
-		//		if (cstin[i][0] != '>' && cstin[i][0] != '<')
-		//		printf("%ld----- %ld\n", (long int )c, (long int)cstin[i]);
 				if (c == cstin[i])
 				{
-				line->redirect[k++] = join(ft_strdup(cstin[i]), " ", cstin[i + 1]);
+					line->redirect[k++] = join(ft_strdup(cstin[i]), " ", cstin[i + 1]);
 				}
 				else
 				{
-					printf("[%c]\n", cstin[i][c - cstin[i]]);
-					
+					int l = c - cstin[i] - 1;
+					printf("%d\n", l);
+					printf("[%s]\n", cstin[i]);
+					while (l >= 0)
+					{
+						if (!(ft_isdigit(cstin[i][l])))
+						{
+							line->proc[j++] = ft_strsub(cstin[i],
+									0, c - cstin[i]);
+							line->redirect[k++] = 
+							join(ft_strdup(&cstin[i][c - cstin[i]]), " ",
+									cstin[i + 1]);
+							printf("[%s] [%s]\n", line->proc[j - 1],
+									line->redirect[k - 1]);
+							break ;
+						}
+						else
+						{
+line->redirect[k++] = join(ft_strjoin(ft_strsub(cstin[i], 0, c - cstin[i]), " "), ft_strjoin(c, " "), cstin[i + 1]);
+					printf("[%s]\n", line->redirect[k-1]);
+							break ;}
+						l--;
+					}
 				}
 				i++;
 			}
@@ -160,33 +179,34 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 	int		fd[2];
 
 	d->in = 0;
-	while (line->next)
-	{
-		pipe(fd);
-		d->out = fd[1];
-		if ((pid = fork ()) == 0)
+	if (line)
+		while (line->next)
 		{
-			if (d->in != 0)
+			pipe(fd);
+			d->out = fd[1];
+			if ((pid = fork ()) == 0)
 			{
-				dup2 (d->in, 0);
-				close (d->in);
+				if (d->in != 0)
+				{
+					dup2 (d->in, 0);
+					close (d->in);
+				}
+				if (d->out != 1)
+				{
+					dup2 (d->out, 1);
+					close (d->out);
+				}
+				return (line);
 			}
-			if (d->out != 1)
-			{
-				dup2 (d->out, 1);
-				close (d->out);
-			}
-		return (line);
+			else
+				wait(NULL);
+			close (d->out);
+			d->in = fd[0];
+			old = line;
+			line = line->next;
+			ft_tabdel(&old->proc);
+			free(old);
 		}
-		else
-			wait(NULL);
-		close (d->out);
-		d->in = fd[0];
-		old = line;
-		line = line->next;
-		ft_tabdel(&old->proc);
-		free(old);
-	}
 	if (d->in != 0)
 	{
 		d->save = dup(0);

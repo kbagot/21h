@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/10 20:35:34 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/12 20:01:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,14 +126,18 @@ static int	parse_error(char **stin)
 	while (stin && stin[i])
 	{
 		tmp = strmsplit(stin[i], " \t\n");
+		if (!tmp[0])
+		{
+			ft_tabdel(&tmp);
+			return (0);
+		}
 		j = 0;
 		if (parse_token(tmp))
 			{ft_tabdel(&tmp);
 			return (0);}
 		while (tmp[j])
 			j++;
-		if (ft_strcmp(tmp[0], "|") == 0 || (j > 0 &&
-					ft_strcmp(tmp[j - 1], "|") == 0))
+		if (strcmp(tmp[0], "|") == 0 || (j > 0 && strcmp(tmp[j - 1], "|") == 0))
 		{
 			ft_tabdel(&tmp);
 			ft_putstr_fd("21sh: error near unexpected token `|'\n", 2);
