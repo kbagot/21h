@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/12 20:01:06 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/13 21:56:19 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,32 +83,18 @@ static int	parse_token(char **stin)
 	i = 0;
 	while (stin[i])
 	{
-		if ((c = ft_strchr(stin[i], '&')) && !stin[i + 1])
+if ((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>')&& (c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>'))
 		{
-			ft_putstr_fd("21sh: syntax error near unexpected token `newline'\n", 2);
-			return (1);
+			if (!stin[i + 1])
+				ft_putstr_fd("21sh: syntax error near unexpected token `newline'\n", 2);
+			else
+				ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
+				return (1);
 		}
 		else if (!ft_strcmp(stin[i], "&"))
 		{
-			ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
+			ft_putstr_fd("321sh: syntax error near unexpected token `&'\n", 2);
 			return (1);
-		}
-		else if ((c = ft_strchr(stin[i], '&')))
-		{
-			int j = 0;
-			while (stin[i][j])
-			{
-				if (stin[i][j] == '&')
-				{
-					if (j == 0)
-			{ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
-			return (1);}
-					else if (stin[i][j - 1] != '>' && stin[i][j - 1] != '<')
-			{ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
-			return (1);}
-				}
-				j++;
-			}
 		}
 		i++;
 	}

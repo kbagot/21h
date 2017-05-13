@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/10 19:01:38 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/13 17:48:46 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <termcap.h>
 # include <termios.h>
 # include <sys/ioctl.h>
+# include <fcntl.h>
 
 typedef struct		s_env
 {
