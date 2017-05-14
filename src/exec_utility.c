@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/13 21:56:15 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/14 21:06:46 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,10 +133,8 @@ static t_line	*redir_operator(char **cstin)
 		//			printf("[%s]\n", cstin[i]);
 					while (l >= 0)
 					{
-						printf("%c\n", cstin[i][l]);
 						if (!ft_isdigit(cstin[i][l]) && cstin[i][l] != '&')
 						{
-						printf("%c\n", cstin[i][l]);
 							line->proc[j++] = ft_strsub(cstin[i],
 									0, c - cstin[i]);
 							line->redirect[k++] = 
@@ -186,8 +184,9 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 	pid_t	pid;
 	int		fd[2];
 
-	d->in = 0;
+	pid = 0;
 	if (line)
+	{
 		while (line->next)
 		{
 			pipe(fd);
@@ -206,19 +205,16 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 				}
 				return (line);
 			}
-			else
-				wait(NULL);
 			close (d->out);
 			d->in = fd[0];
 			old = line;
 			line = line->next;
 			ft_tabdel(&old->proc);
+			ft_tabdel(&old->redirect);
 			free(old);
 		}
-	if (d->in != 0)
-	{
-		d->save = dup(0);
-		dup2(d->in, 0);
+		if (d->in != 0)
+			dup2(d->in, 0);
 	}
 	return (line);
 }
@@ -232,24 +228,56 @@ static void exec_redir(char **rdr, t_data *d)
 
 	j = 0;
 	i = 0;
-	up = 1;
 	while (rdr[j])
 	{
 		cmd = ft_strsplit(rdr[j], ' ');
 		while (cmd[i])
 			i++;
 		i--;
-		if (i != 1)
-			up = ft_atoi(cmd[0]);
-		printf("[[%s]]\n", cmd[i]);
 		if (i >= 0 && !ft_strcmp(cmd[i - 1], ">"))
 		{
-			d->out = open(cmd[i], O_CREAT | O_WRONLY,
+			if (i != 1)
+				up = ft_atoi(cmd[0]);
+			else
+				up = 1;
+			d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
 					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-			d->save = dup(up);
-			printf("[[%d]]\n", d->save);
 			dup2(d->out, up);
+			close (d->out);
 		}
+		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
+		{
+			if (i != 1)
+				up = ft_atoi(cmd[0]);
+			else
+				up = 1;
+			d->out = open(cmd[i], O_CREAT | O_WRONLY | O_APPEND,
+					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+			dup2(d->out, up);
+			close (d->out);
+		}
+		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
+		{
+			if (i != 1)
+				up = ft_atoi(cmd[0]);
+			else
+				up = 1;
+			d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
+					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+			dup2(d->out, up);
+			close (d->out);
+		}
+		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<"))
+		{
+			if (i != 1)
+				up = ft_atoi(cmd[0]);
+			else
+				up = 0;
+			d->in = open(cmd[i], O_RDONLY);
+			dup2(d->in, up);
+			close (d->in);
+		}
+		i = 0;
 	j++;
 	}
 }
@@ -259,11 +287,13 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	t_env	*tmp_env;
 	t_line	*line;
 
+	data->stdin_cpy = dup(0);
+	data->stdout_cpy = dup(1);
 	data->in = 0;
 	data->out = 1;
 	line = redir_operator(cstin);
-	exec_redir(line->redirect, data);
 	line = fork_pipes(line, data);
+	exec_redir(line->redirect, data);
 	cstin = line->proc;
 	tmp_env = NULL;
 	if ((data->rvalue = builtin(cstin, s_env, stin, data)))
@@ -278,20 +308,29 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 		exec_utility(list_to_tab(tmp_env), cstin, data);
 	destroy_env(&tmp_env);
 	if (line->next)
-		exit(data->rvalue);
+	{
+		_exit(data->rvalue);
+	}
 	ft_tabdel(&line->proc);
 	ft_tabdel(&line->redirect);
 	free(line);
+
+	int status;
+	int pid;
+	while ((pid = wait(&status)) > 0)
+	{
+		status = 0;;
+}
 	if (data->out != 1)
 	{
-		dup2(data->save, 1);
 		close(data->out);
-		close(data->save);
+		dup2(data->stdout_cpy, 1);
+		close(data->stdout_cpy);
 	}
 	if (data->in != 0)
 	{
-		dup2(data->save, 0);
 		close(data->in);
-		close(data->save);
+		dup2(data->stdin_cpy, 0);
+		close(data->stdin_cpy);
 	}
 } 

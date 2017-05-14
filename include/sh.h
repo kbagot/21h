@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/13 17:48:46 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/14 18:22:50 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ typedef struct		s_data
 	struct s_line	*line;
 	int 			in;
 	int 			out;
-	int				save;
+	int				stdin_cpy;
+	int				stdout_cpy;
 }					t_data;
 
 typedef struct		s_line // line piped
