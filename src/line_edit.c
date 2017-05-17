@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/13 21:56:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/17 20:56:30 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,9 @@ static void	add_history(char *cmd, t_data *data)
 
 static void	end_line(t_data *data, char *stin, char *buff)
 {
-	tputs(tgetstr("do", NULL), 1, print);
+//	tputs(tgetstr("do", NULL), 1, print);
 	tputs(tgetstr("ei", NULL), 1, print);
+	printf("\n");
 	add_history(stin, data);
 	ft_strdel(&buff);
 	reset_term();
