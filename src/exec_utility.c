@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/17 20:57:50 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/18 19:52:59 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	{
 		//		signo = pid;
 		//		signal(SIGINT, kill_procs);
+		data->lastpid = pid;
 		wait(&rvalue);
 		if (WIFEXITED(rvalue))
 			data->rvalue = WEXITSTATUS(rvalue);
@@ -137,6 +138,7 @@ static t_line	*redir_operator(char **cstin)
 				if (c == cstin[i])
 				{
 					line->redirect[k++] = join(ft_strdup(cstin[i]), " ", cstin[i + 1]);
+				//				printf("[cle[%s]\n", line->redirect[k-1]);
 				}
 				else
 				{
@@ -152,8 +154,8 @@ static t_line	*redir_operator(char **cstin)
 							line->redirect[k++] = 
 								join(ft_strdup(&cstin[i][c - cstin[i]]), " ",
 										cstin[i + 1]);
-							//							printf("[%s] [%s]\n", line->proc[j - 1],
-							//									line->redirect[k - 1]);
+						//	printf("[%s] [%s]\n", line->proc[j - 1],
+				//			line->redirect[k - 1]);
 							break ;
 						}
 						else
@@ -165,7 +167,7 @@ static t_line	*redir_operator(char **cstin)
 							line->redirect[k++] = join(ft_strjoin(tmp, " "), tmp2, cstin[i + 1]);
 							ft_strdel(&tmp);
 							ft_strdel(&tmp2);
-							//			printf("[%s]\n", line->redirect[k-1]);
+							//	printf("[%s]\n", line->redirect[k-1]);
 							break ;}
 						l--;
 					}
@@ -287,7 +289,7 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 	else
 		up = 1;
 	if ((d->out = open(cmd[i], O_CREAT | O_WRONLY | O_APPEND,
-			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) != -1)
+					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) != -1)
 		dup2(d->out, up);
 	else
 		ft_putstr_fd("21sh: permission denied\n", 2);
@@ -296,61 +298,88 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 }
 
 static void	here_document(char **cmd, t_data *d, int i)
-{// <<
+{// <<   - not done  emove tab
 	int up;
 	int fd[2];
 
 	pipe(fd);
-	d->out = 1;
+	d->in = fd[0];
 	if (i != 1)
 		up = ft_atoi(cmd[0]);
 	else
 		up = 0;
 	char *line;
 	ft_putstr("> ");
+	//	printf("%s\n", cmd[i]);
 	while (42)
 	{
 		line = line_edit(d);
-		if (line && !ft_strcmp(line, cmd[i]))
+		if (line && (!ft_strcmp(line, cmd[i]) || !ft_strcmp(line, "exit")))
 			break ;
 		ft_putstr_fd(line, fd[1]);
 		ft_putchar_fd('\n', fd[1]);
 		ft_strdel(&line);
-		ft_putstr("> ");
+		ft_putstr("\n> ");
 	}
 	close (fd[1]);
 	dup2(fd[0], up);
-	/*while (get_next_line(0, &line))
-	{
-		if (!ft_strcmp(line, cmd[i]))
-			break ;
-		ft_putstr_fd(line, fd[1]);
-		ft_putstr("> ");
-		//write(fd[1], line, ft_strlen(line));
-	}
-	close (fd[1]);
-	dup2(fd[0], up);*/
-/*	if ((d->in = open("salut", O_WRONLY | O_CREAT,
-			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) != -1)
-	{	write (d->in, "salut\n", 6);
-		close (d->in);
-		d->in = open("salut", O_RDONLY);
-		dup2(d->in, up);}
+	close(fd[0]);
+}
+
+static void	dup_output(char **cmd, t_data *d, int i)
+{
+	int up;
+
+	if (i != 1)
+		up = ft_atoi(cmd[0]);
 	else
-		ft_putstr_fd("21sh: permission denied\n", 2);
-	if (!(d->in >= 0 && d->in <= 2))
-		close (d->in);
-	//int lol;*/
-//	lol = dup(15);
-//	dup2(lol, 0);
-//	close(lol);
+		up = 1;
+	if (!(ft_isnbr(cmd[i])) && ft_strcmp(cmd[i], "-"))
+		d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
+				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	else if (!ft_strcmp(cmd[i], "-"))
+		close (up);
+	else
+		d->out = ft_atoi(cmd[i]);
+	if (!isatty(d->out)) // && prompt me
+		ft_putstr_fd("bash: Bad file descriptor\n", 2);
+	else
+	{
+		d->out = dup2(d->out, up);
+		if (!(d->out >= 0 && d->out <= 2))
+			close (d->out);
+	}
+}
+
+static void	dup_input(char **cmd, t_data *d, int i)
+{
+	int up;
+
+	if (i != 1)
+		up = ft_atoi(cmd[0]);
+	else
+		up = 0;
+	if (!(ft_isnbr(cmd[i])) && ft_strcmp(cmd[i], "-"))
+		d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
+				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+	else if (!ft_strcmp(cmd[i], "-"))
+		close (up);
+	else
+		d->out = ft_atoi(cmd[i]);
+	if (!isatty(d->out)) // && prompt me
+		ft_putstr_fd("bash: Bad file descriptor\n", 2);
+	else
+	{
+		d->out = dup2(d->out, up);
+		if (!(d->out >= 0 && d->out <= 2))
+			close (d->out);
+	}
 }
 
 static void exec_redir(char **rdr, t_data *d)
 {
 	int i;
 	int j;
-	int up;
 	char **cmd;
 
 	j = 0;
@@ -368,27 +397,13 @@ static void exec_redir(char **rdr, t_data *d)
 			redir_input(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
 			append_redir_output(cmd, d, i);
-		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<<"))
+		else if (i >= 0 && (!ft_strcmp(cmd[i - 1], "<<") ||
+					!ft_strcmp(cmd[i - 1], "<<-")))
 			here_document(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
-		{
-			{
-				if (i != 1)
-					up = ft_atoi(cmd[0]);
-				else
-					up = 1;
-				if (!(ft_isnbr(cmd[i])))
-					d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
-							S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-				else
-					d->out = ft_atoi(cmd[i]);
-				//		if (isatty(ft_atoi(cmd[i])))
-				//	ft_putstr_fd("bash: Bad file descriptor\n", 2);
-				d->out = dup2(d->out, up);
-				if (!(d->out >= 0 && d->out <= 2))
-					close (d->out);
-			}
-		}
+			dup_output(cmd, d, i);
+		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
+			dup_input(cmd, d, i);
 		i = 0;
 		j++;
 	}

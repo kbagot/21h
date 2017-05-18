@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/17 20:55:43 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/18 20:48:57 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,6 +154,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 		else
 			ft_printf("\033[0;36m[]> \033[0m");
 		stin = line_edit(data);
+		printf("\n");
 		septin = ft_strsplit(stin, ';');//use stin fot history
 		if (parse_error(septin)) // token
 		{

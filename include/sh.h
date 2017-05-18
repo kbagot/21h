@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/16 18:03:13 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/18 17:08:00 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include <termios.h>
 # include <sys/ioctl.h>
 # include <fcntl.h>
+# include <signal.h>
 
 typedef struct		s_env
 {
@@ -44,6 +45,7 @@ typedef struct		s_data
 	int				stdin_cpy;
 	int				stdout_cpy;
 	int				stderr_cpy;
+	int				lastpid;
 }					t_data;
 
 typedef struct		s_line // line piped

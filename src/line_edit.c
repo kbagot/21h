@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/17 20:56:30 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/18 20:48:55 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ static void	end_line(t_data *data, char *stin, char *buff)
 {
 //	tputs(tgetstr("do", NULL), 1, print);
 	tputs(tgetstr("ei", NULL), 1, print);
-	printf("\n");
 	add_history(stin, data);
 	ft_strdel(&buff);
 	reset_term();
@@ -70,11 +69,27 @@ static void	end_line(t_data *data, char *stin, char *buff)
 static void	make_conform(char **stin, int *i, int c, char *nst)
 {
 	char	*tmp;
+	int		l;
 
+//	printf("before[%s]\n", *stin);
 	tmp = *stin;
 	*stin = join(ft_strsub(tmp, 0, *i), nst, &tmp[*i + c]);
 	ft_strdel(&tmp);
 	*i += ft_strlen(nst) - 1;
+	l = *i + 1;
+//	printf("mid[%s]\n", &stin[0][l]);
+	tmp = *stin;
+	while (stin[0][l] && stin[0][l] != ' ')
+	{
+		if (stin[0][l] == '<' || stin[0][l] == '>')
+		{
+			*stin = join(ft_strsub(tmp, 0, l), " ", &tmp[l]);
+			ft_strdel(&tmp);
+			break ;
+		}
+		l++;
+	}
+//	printf("after[%s]\n", *stin);
 }
 
 static char	*conform(char *stin)
@@ -86,18 +101,27 @@ static char	*conform(char *stin)
 	{// add a if in quote or not
 		if (stin[i] == '|')
 			make_conform(&stin, &i, 1, " | ");
-		else if (stin[i] == '&' && stin[i + 1] != '<' && stin[i + 1] != '>')
-			make_conform(&stin, &i, 1, "& ");
-		else if (!ft_strncmp(&stin[i], ">>", 2) && ft_strncmp(&stin[i], ">>&", 3))
+	//	else if (stin[i] == '&' && stin[i + 1] != '<' && stin[i + 1] != '>')
+	//		make_conform(&stin, &i, 1, "& ");
+		else if (!ft_strncmp(&stin[i], ">>", 2))
 			make_conform(&stin, &i, 2, ">> ");
-		else if (!ft_strncmp(&stin[i], "<<", 2) && ft_strncmp(&stin[i], "<<&", 3))
+		else if (!ft_strncmp(&stin[i], "<<-", 3))
+			make_conform(&stin, &i, 3, "<<- ");
+		else if (!ft_strncmp(&stin[i], "<<", 2))
 			make_conform(&stin, &i, 2, "<< ");
-		else if (!ft_strncmp(&stin[i], ">", 1) && ft_strncmp(&stin[i], ">&", 2) && stin[i + 1] != '>')
+		else if (!ft_strncmp(&stin[i], ">", 1) &&
+				ft_strncmp(&stin[i], ">&", 2))
 			make_conform(&stin, &i, 1, "> ");
-		else if (!ft_strncmp(&stin[i], "<", 1) && ft_strncmp(&stin[i], "<&", 2) && stin[i + 1] != '<')
+		else if (!ft_strncmp(&stin[i], ">&", 2))
+			make_conform(&stin, &i, 2, ">& ");
+		else if (!ft_strncmp(&stin[i], "<", 1) &&
+				ft_strncmp(&stin[i], "<&", 2))
 			make_conform(&stin, &i, 1, "< ");
+		else if (!ft_strncmp(&stin[i], "<&", 1))
+			make_conform(&stin, &i, 2, "<& ");
 		i++;
 	}
+	//printf("%s\n", stin);
 	return (stin);
 }
 
