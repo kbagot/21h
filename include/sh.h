@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/18 17:08:00 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/22 19:12:12 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,7 @@ void				copy_cut(t_data *data, char **stin, char *buff);
 void				writer(t_data *data, char **stin, char *buff);
 void				paste(t_data *data, char **stin);
 void				move_by_word(t_data *data, char *stin, char *buff);
+char				**strquotesplit(char const *s, char *c);
+char				**splitforquote(char const *s, char *c);
 
 #endif
