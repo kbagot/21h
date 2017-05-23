@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/22 20:41:56 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/23 19:43:24 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -161,11 +161,12 @@ void		show_prompt(t_env *s_env, t_data *data)
 			while (stin && septin[i])
 			{
 				cstin = splitforquote(septin[i], " \t\n");
+				//cstin = strquotesplit(septin[i], " \t\n");
 				//int lol;
 				//lol=0;
-			//	while (cstin[lol])
-			//	{ft_printf("%s\n", cstin[lol]);
-			//	lol++;}
+				//while (cstin[lol])
+				//{ft_printf("[%s]\n", cstin[lol]);
+				//lol++;}
 				set(cstin, s_env);
 				parse_entry(&s_env, cstin, septin[i], data);
 				ft_tabdel(&cstin);

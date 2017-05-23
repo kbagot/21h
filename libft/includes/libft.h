@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/12 20:21:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/04 18:35:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/23 14:16:44 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ int					ft_is_prime(int nb);
 int					ft_isspace(int c);
 void				ft_tabdel(char ***s);
 char				**strmsplit(char const *s, char *c);
+int					ft_isnbr(char *s);
 
 #endif

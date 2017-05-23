@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/22 20:41:53 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/05/23 19:43:22 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,80 @@ static void		find_pipe(char **cstin, int *j, int *k)
 	//	printf("[%d]  [%d]\n", *j, *k);
 }
 
-static t_line	*redir_operator(char **cstin)
+static void		stock_redir_fd(t_line *line, char **cstin, int *k, char *c)
+{
+	char *tmp;
+	char *tmp2;
+
+	tmp = ft_strsub(cstin[0], 0, c - cstin[0]);
+	tmp2 = ft_strjoin(c, " ");
+	line->redirect[*k] = join(ft_strjoin(tmp, " "), tmp2, cstin[1]);
+	ft_strdel(&tmp);
+	ft_strdel(&tmp2);
+	//	printf("zx[%s]\n", line->redirect[*k-1]);
+	*k += 1;
+}
+
+static void		stock_redir(char **cstin, t_line *line, int *j, int *k)
+{
+	char *c;
+
+	c = NULL;
+	if (!(c = ft_strchr(*cstin, '>')))
+		c = ft_strchr(*cstin, '<');
+	if (c == *cstin)
+	{
+		line->redirect[*k] = join(ft_strdup(*cstin), " ", cstin[1]);
+		*k += 1;
+	}
+	else
+	{
+		if (!ft_isnbr(ft_strsub(*cstin, 0, c - *cstin)))
+		{
+			line->proc[*j] = ft_strsub(*cstin, 0, c - *cstin);
+			line->redirect[*k] = join(ft_strdup(&cstin[0][c - *cstin]), " ",
+					cstin[1]);
+			//			printf("qw[%s] [%s]\n", line->proc[*j - 1],
+			//			line->redirect[*k - 1]);
+			*j += 1;
+			*k += 1;
+		}
+		else
+			stock_redir_fd(line, cstin, k, c);
+	}
+}
+
+static void		separate_line(char **cstin, int *i, t_line *line)
+{
+	int j;
+	int k;
+
+	k = 0;
+	j = 0;
+	while (cstin[*i] && (ft_strcmp(cstin[*i], "|") != 0))
+	{//add redirect cmd
+		char *c;
+		if (!ft_strchr("\'\"", cstin[*i][0]) && ((c = ft_strchr(cstin[*i], '>')) || (c = ft_strchr(cstin[*i], '<'))))
+		{
+			stock_redir(&cstin[*i], line, &j, &k);
+			*i += 1;
+		}
+		else
+		{
+			if (ft_strchr("\'\"", cstin[*i][0]))
+				line->proc[j++] = ft_strdup(&cstin[*i][1]);
+			else
+				line->proc[j++] = ft_strdup(cstin[*i]);
+		}
+		if (!cstin[*i])
+			break ;
+		*i += 1;
+	}
+	line->redirect[k] = NULL;
+	line->proc[j] = NULL;
+}
+
+static t_line	*split_pipe(char **cstin)
 {
 	t_line *line;
 	int		i;
@@ -128,65 +201,7 @@ static t_line	*redir_operator(char **cstin)
 		find_pipe(&cstin[i], &j, &k);
 		line->proc = (char**)malloc(sizeof(char*) * j + 1);
 		line->redirect = (char**)malloc(sizeof(char*) * k + 1);
-		j = 0;
-		k = 0;
-		while (cstin[i] && (ft_strcmp(cstin[i], "|") != 0))
-		{//add redirect cmd
-			char *c;
-			if (!ft_strchr("\'\"", cstin[i][0]) && ((c = ft_strchr(cstin[i], '>')) || (c = ft_strchr(cstin[i], '<'))))
-			{
-				if (c == cstin[i])
-				{
-					line->redirect[k++] = join(ft_strdup(cstin[i]), " ", cstin[i + 1]);
-				//				printf("[cle[%s]\n", line->redirect[k-1]);
-				}
-				else
-				{
-					int l = c - cstin[i] - 1;
-								printf("%d\n", l);
-							printf("[%s]\n", cstin[i]);
-					while (l >= 0)
-					{//BIg bullshit
-						if (!ft_isdigit(cstin[i][l]) && cstin[i][l] != '&')
-						{
-							line->proc[j++] = ft_strsub(cstin[i],
-									0, c - cstin[i]);
-							line->redirect[k++] = 
-								join(ft_strdup(&cstin[i][c - cstin[i]]), " ",
-										cstin[i + 1]);
-							printf("qw[%s] [%s]\n", line->proc[j - 1],
-							line->redirect[k - 1]);
-							break ;
-						}
-						else
-						{
-							char *tmp;
-							char *tmp2;
-							tmp = ft_strsub(cstin[i], 0, c - cstin[i]);
-							tmp2 = ft_strjoin(c, " ");
-							line->redirect[k++] = join(ft_strjoin(tmp, " "), tmp2, cstin[i + 1]);
-							ft_strdel(&tmp);
-							ft_strdel(&tmp2);
-								printf("zx[%s]\n", line->redirect[k-1]);
-							break ;}
-						l--;
-					}
-				}
-				i++;
-			}
-			else
-			{
-				if (ft_strchr("\'\"", cstin[i][0]))
-					line->proc[j++] = ft_strdup(&cstin[i][1]);
-				else
-					line->proc[j++] = ft_strdup(cstin[i]);
-			}
-			if (!cstin[i])
-				break ;
-			i++;
-		}
-		line->redirect[k] = NULL;
-		line->proc[j] = NULL;
+		separate_line(cstin, &i, line);
 		line->next = NULL;
 		if (!cstin[i])
 			break ;
@@ -238,19 +253,6 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 	return (line);
 }
 
-static int ft_isnbr(char *s)
-{
-	int i;
-
-	i = 0;
-	while (s[i])
-	{
-		if (!(ft_isdigit(s[i])))
-			return(0);
-		i++;
-	}
-	return (1);
-}
 
 static void	redir_output(char **cmd, t_data *d, int i)
 {//  >
@@ -429,7 +431,7 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	data->in = 0;
 	data->out = 1;
 	data->err = 2;
-	line = redir_operator(cstin);
+	line = split_pipe(cstin);
 	line = fork_pipes(line, data);
 	exec_redir(line->redirect, data);
 	cstin = line->proc;
