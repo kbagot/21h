@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/18 20:48:55 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/05 19:40:47 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ static void	add_history(char *cmd, t_data *data)
 
 static void	end_line(t_data *data, char *stin, char *buff)
 {
-//	tputs(tgetstr("do", NULL), 1, print);
 	tputs(tgetstr("ei", NULL), 1, print);
 	add_history(stin, data);
 	ft_strdel(&buff);
@@ -71,13 +70,11 @@ static void	make_conform(char **stin, int *i, int c, char *nst)
 	char	*tmp;
 	int		l;
 
-//	printf("before[%s]\n", *stin);
 	tmp = *stin;
 	*stin = join(ft_strsub(tmp, 0, *i), nst, &tmp[*i + c]);
 	ft_strdel(&tmp);
 	*i += ft_strlen(nst) - 1;
 	l = *i + 1;
-//	printf("mid[%s]\n", &stin[0][l]);
 	tmp = *stin;
 	while (stin[0][l] && stin[0][l] != ' ')
 	{
@@ -89,7 +86,6 @@ static void	make_conform(char **stin, int *i, int c, char *nst)
 		}
 		l++;
 	}
-//	printf("after[%s]\n", *stin);
 }
 
 static char	*conform(char *stin)
@@ -101,8 +97,6 @@ static char	*conform(char *stin)
 	{// add a if in quote or not
 		if (stin[i] == '|')
 			make_conform(&stin, &i, 1, " | ");
-	//	else if (stin[i] == '&' && stin[i + 1] != '<' && stin[i + 1] != '>')
-	//		make_conform(&stin, &i, 1, "& ");
 		else if (!ft_strncmp(&stin[i], ">>", 2))
 			make_conform(&stin, &i, 2, ">> ");
 		else if (!ft_strncmp(&stin[i], "<<-", 3))
@@ -121,13 +115,53 @@ static char	*conform(char *stin)
 			make_conform(&stin, &i, 2, "<& ");
 		i++;
 	}
-	//printf("%s\n", stin);
 	return (stin);
 }
 
-/*
- **ll
-*/
+static int	conform_quote(char *s)
+{
+	int i;
+	int quote;
+
+	quote = 0;
+	i = 0;
+	while (s && s[i])
+	{
+		if (quote == 0 && (s[i] == '\"' || s[i] == '\"'))
+			quote = s[i];
+		else if (quote != 0 && s[i] == quote )
+			quote = 0;
+		i++;
+	}
+	return (quote);
+}
+
+void		act_pos(t_data *d)
+{
+	struct winsize	sz;
+	char			*ansi;
+	char			*buff;
+	char			*tmp;
+
+	ansi = ft_strnew(1);
+	buff = ft_strnew(10);
+	ioctl(0, TIOCGWINSZ, &sz);
+	d->scr_row = sz.ws_row;
+	d->scr_col = sz.ws_col;
+	ft_printf("\E[6n");
+	while (ft_strchr(buff, 'R') == NULL)
+	{
+		ft_bzero(buff, 10);
+		read(0, buff, 10);
+		tmp = ansi;
+		ansi = ft_strjoin(tmp, buff);
+		ft_strdel(&tmp);
+	}
+	d->row = ft_atoi(&ansi[2]);
+	d->col = ft_atoi(&ft_strchr(&ansi[2], ';')[1]);
+	ft_strdel(&buff);
+	ft_strdel(&ansi);
+}
 
 char		*line_edit(t_data *data)
 {
@@ -138,13 +172,19 @@ char		*line_edit(t_data *data)
 	buff = ft_strnew(6);
 	data->cursor = 0;
 	init_term();
-	tputs(tgetstr("im", NULL), 1, print);
+	//tputs(tgetstr("im", NULL), 1, print);
 	tputs(tgetstr("sc", NULL), 1, print);
+	act_pos(data);
+	data->start_row = data->row;
+	data->start_col = data->col;
 	while (42)  // need \n
 	{
+		act_pos(data);
+		if (stin)
+		data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-	//		ft_printf("%d-%d-%d-%d-%d\n", buff[0], buff[1], buff[2], buff[3], buff[4]);
+//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);//ft_printf("%s\n", buff);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
@@ -161,24 +201,30 @@ char		*line_edit(t_data *data)
 		else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
 			paste(data, &stin);
 		else if (buff[0] == 12)  // CTRL+L CLEAR
-		{
+		{///
 			tputs(tgetstr("cl", NULL), 1, print);
 			data->cursor = 0;
 		}
 		else if (buff[0] == 10) // send
 		{
-			end_line(data, stin, buff);
-			stin = conform(stin);
-			//printf("%s\n", stin);
-			return (stin);
+			if (conform_quote(stin) != 0)
+				ft_putstr("\n> ");
+			else
+			{
+	//			printf("%d   %d\n", data->cursor, data->scr_col);
+				end_line(data, stin, buff);
+				stin = conform(stin);
+				//printf("%s\n", stin);
+				return (stin);
+			}
 		}
 		else if (buff[0] == 127)
 		{
 			if (data->cursor > 0)
 			{
 				stin = delete_one(stin, data);
-				tputs(tgetstr("le", NULL), 1, print);
 				tputs(tgetstr("dc", NULL), 1, print);
+				tputs(tgetstr("le", NULL), 1, print);
 				data->cursor--;
 			}
 		}

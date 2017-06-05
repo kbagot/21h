@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/22 19:12:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/05 13:38:56 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,13 @@ typedef struct		s_env
 
 typedef struct		s_data
 {
+	int				line_count;
+	int				start_row;
+	int				start_col;
+	int				row;
+	int				col;
+	int				scr_row;
+	int				scr_col;
 	int				rvalue;
 	struct s_hist	*hist;
 	int				cursor;
@@ -92,5 +99,8 @@ void				paste(t_data *data, char **stin);
 void				move_by_word(t_data *data, char *stin, char *buff);
 char				**strquotesplit(char const *s, char *c);
 char				**splitforquote(char const *s, char *c);
+void				act_pos(t_data *d);
+void				go_home(t_data *data);
+void				go_end(t_data *data, char *stin);
 
 #endif

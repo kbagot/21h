@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 18:27:12 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/01 14:35:13 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/05 14:03:33 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,34 +48,60 @@ static int	move_cursor(t_data *data, char *stin, char *buff)
 	if (buff[2] == tgetstr("kr", NULL)[2] && stin &&
 			data->cursor < (int)ft_strlen(stin))
 	{
-		tputs(tgetstr("nd", NULL), 1, print);
+		if (data->col == data->scr_col)
+			tputs(tgetstr("do", NULL), 1, print);
+		else
+			tputs(tgetstr("nd", NULL), 1, print);
 		data->cursor++;
 		return (0);
 	}
 	else if (buff[2] == tgetstr("kl", NULL)[2] && data->cursor > 0)
 	{
-		tputs(tgetstr("le", NULL), 1, print);
+		if (data->col == 1)
+			tputs(tgoto(tgetstr("cm", NULL),
+						data->scr_col - 1, data->row - 2), 1, print);
+		else
+			tputs(tgetstr("le", NULL), 1, print);
 		data->cursor--;
 		return (0);
 	}
 	return (1);
 }
 
+
+void	go_home(t_data *data)
+{
+		while (data->cursor != 0)
+		{
+			act_pos(data);
+			if (data->col == 1)
+				tputs(tgoto(tgetstr("cm", NULL),
+							data->scr_col - 1, data->row - 2), 1, print);
+			else
+				tputs(tgetstr("le", NULL), 1, print);
+			data->cursor--;
+		}
+}
+
+void		go_end(t_data *data, char *stin)
+{
+		while (data->cursor < (int)ft_strlen(stin))
+		{
+			act_pos(data);
+			if (data->col == data->scr_col)
+				tputs(tgetstr("do", NULL), 1, print);
+			else
+				tputs(tgetstr("nd", NULL), 1, print);
+			data->cursor++;
+		}
+}
+
 static void	home_end_key(t_data *data, char *stin, char *buff)
 {
 	if (buff[2] == 72 && data->cursor != 0)
-	{
-		tputs(tgetstr("rc", NULL), 1, print);
-		data->cursor = 0;
-	}
+		go_home(data);
 	else if (buff[2] == 70 && stin)
-	{
-		while (data->cursor < (int)ft_strlen(stin))
-		{
-			tputs(tgetstr("nd", NULL), 1, print);
-			data->cursor++;
-		}
-	}
+		go_end(data, stin);
 }
 
 void		arrow_key(t_data *data, char **stin, char *buff)
