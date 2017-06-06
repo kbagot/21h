@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/05 19:40:46 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/06 18:54:48 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,18 @@ static void	standout_move(t_data *data, char *stin, char *buff)
 {
 	if (stin && data->cursor >= 0 && data->cursor < (int)ft_strlen(stin))
 	{
+		act_pos(data);
 		ft_putchar(stin[data->cursor]);
-		tputs(tgetstr("le", NULL), 1, print);
+		if (data->col != data->scr_col)
+			tputs(tgetstr("le", NULL), 1, print);
 	}
-	arrow_key(data, &stin, buff);
+	if (buff[2] == 'C' && data->col == data->scr_col && data->cursor < (int)ft_strlen(stin))
+	{
+		tputs(tgetstr("do", NULL), 1, print);
+		data->cursor++;
+	}
+	else
+		arrow_key(data, &stin, buff);
 }
 
 static void	copy(t_data *data, char *stin, int ce)
@@ -47,7 +55,8 @@ static void	cut(t_data *data, char **stin, int ce)
 		{
 			data->clipboard = ft_strsub(*stin, data->cursor,
 					ce - data->cursor + 1);
-			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]); //stin leaks
+			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]); 
+			//stin leaks
 		}
 		else if (ce < data->cursor)
 		{
@@ -58,34 +67,42 @@ static void	cut(t_data *data, char **stin, int ce)
 	}
 }
 
-static void	reset_line(t_data *data, char *stin)
+void	cleaner(t_data *data)
 {
 	int ll;
-
 	ll = 0;
+
+	act_pos(data);
+	ll = data->scr_col - data->col + 1;
+	while (ll != 0)
+	{
+		tputs(tgetstr("dc", NULL), 1, print);
+		ll--;
+	}
+	if (data->row != data->scr_row)
+	{
+		while (data->row != data->scr_row)
+		{
+			act_pos(data);
+			if (data->row != data->scr_row)
+				tputs(tgetstr("do", NULL), 1, print);
+			tputs(tgetstr("dl", NULL), 1, print);
+		}
+	}
+}
+
+void	reset_line(t_data *data, char *stin)
+{
+	int cursor;
 	tputs(tgetstr("se", NULL), 1, print);
+	cursor = data->cursor;
 	if (stin)
 	{
 		go_home(data);
-		ft_printf("%s", stin);
-		act_pos(data);
-		ll = data->scr_col - data->col + 1;
-		while (ll != 0)
-		{
-			tputs(tgetstr("dc", NULL), 1, print);
-			ll--;
-		}
-		if (data->row != data->scr_row)
-		{
-			while (data->row != data->scr_row)
-			{
-				act_pos(data);
-				if (data->row != data->scr_row)
-				tputs(tgetstr("do", NULL), 1, print);
-				tputs(tgetstr("dl", NULL), 1, print);
-			}
-		}
+		ft_printf("%s ", stin);
+		cleaner(data);
 	}
+	data->cursor = cursor;
 	tputs(tgetstr("rc", NULL), 1, print);
 }
 
@@ -118,6 +135,18 @@ void		copy_cut(t_data *data, char **stin, char *buff)
 		else if (buff[0] == 27 && buff[1] == 0)//echap
 			break ;
 	}
-	data->cursor = ce;
+	int t;
+	if (ce > data->cursor)
+	{
+		t = ce - data->cursor;
+		data->cursor = ce;
+		while (t > 0)
+		{
+			move_left(data);
+			t--;
+		}
+	}
+	else
+		data->cursor = ce;
 	tputs(tgetstr("se", NULL), 1, print);
 }

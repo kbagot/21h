@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/19 12:07:27 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/25 18:52:28 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/06 20:03:30 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	init_term(void)
 	ret = tgetent(t_buff, term_name);
 	tcgetattr(0, &term);
 	term.c_lflag &= ~(ECHO | ICANON);
-//	term.c_cflag &= ~(CREAD);
 	term.c_cc[VTIME] = 0;
 	term.c_cc[VMIN] = 1;
 	tcsetattr(0, TCSADRAIN, &term);
@@ -42,7 +41,6 @@ void	reset_term(void)
 	ret = tgetent(t_buff, term_name);
 	tcgetattr(0, &term);
 	term.c_lflag = (ECHO | ICANON);
-//	term.c_cflag = (CREAD);
 	term.c_cc[VTIME] = 0;
 	term.c_cc[VMIN] = 1;
 	tcsetattr(0, TCSADRAIN, &term);

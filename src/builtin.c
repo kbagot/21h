@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/29 19:04:37 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/06 21:00:35 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,22 @@ static int	exec_exit(char **cstin, t_data *data, char *stin)
 	}
 	ft_strdel(&stin);
 	s = data->rvalue;
-/*	
-	free(data);
-	while (data->hist->next)
+	/*	
+		free(data);
+		while (data->hist->next)
 		data->hist = data->hist->next;
-	while (data->hist->before)
-	{
+		while (data->hist->before)
+		{
 		data->hist = data->hist->before;
 		ft_strdel(&data->hist->next->elem);
 		if (data->hist->next)
-			free(data->hist->next);
-	}
-	if (data->hist)
-	{	
+		free(data->hist->next);
+		}
+		if (data->hist)
+		{	
 		ft_strdel(&data->hist->elem);
 		free(data->hist);
-	}*/
+		}*/
 	exit(s);
 	return (1);
 }
@@ -107,6 +107,16 @@ static int	exec_history(t_data *data)
 	return (1);
 }
 
+static int	exec_help()
+{
+	ft_putstr("21sh\nKEYBINDING\nLeave current shell [CTRL+D]\n");
+	ft_putstr("Clear shell [CTRL+L]\n\nEnter in cpy/cut mode [CTRL+K]\n");
+	ft_putstr("Cut selection [CTRL+K]\nCopy selection [CTRL+U]");
+	ft_putstr("\nLeave mode [ESC]\nPaste [CTRL+P]\n\n");
+	ft_putstr("Move by word left [CTRL+F]\nMove by word right [CTRL+B]\n");
+	return (1);
+}
+
 int			builtin(char **cstin, t_env **env, char *stin, t_data *data)
 {
 	if (cstin[0] && (ft_strcmp(cstin[0], "exit") == 0))
@@ -123,5 +133,7 @@ int			builtin(char **cstin, t_env **env, char *stin, t_data *data)
 		return (exec_env(cstin, env));
 	else if (cstin[0] && (ft_strcmp(cstin[0], "history") == 0))
 		return (exec_history(data));
+	else if (cstin[0] && (ft_strcmp(cstin[0], "help") == 0))
+		return (exec_help());
 	return (0);
 }

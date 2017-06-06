@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/05 19:40:47 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/06 20:52:17 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,13 @@ void		act_pos(t_data *d)
 	ft_strdel(&ansi);
 }
 
+static void	paste(t_data *data, char **stin)
+{
+
+	if (data->clipboard)
+		writer(data, stin, data->clipboard);
+}
+
 char		*line_edit(t_data *data)
 {
 	char	*buff;
@@ -181,10 +188,10 @@ char		*line_edit(t_data *data)
 	{
 		act_pos(data);
 		if (stin)
-		data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
+			data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);//ft_printf("%s\n", buff);
+		//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);//ft_printf("%s\n", buff);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
@@ -196,25 +203,22 @@ char		*line_edit(t_data *data)
 			end_line(data, stin, buff);
 			return (stin);
 		}
-		else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)// c mode ctrl+u k
+		else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)//c mode ctrl+u k
 			copy_cut(data, &stin, buff);
 		else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
 			paste(data, &stin);
-		else if (buff[0] == 12)  // CTRL+L CLEAR
-		{///
-			tputs(tgetstr("cl", NULL), 1, print);
-			data->cursor = 0;
-		}
-		else if (buff[0] == 10) // send
+		else if (buff[0] == 10 || buff[0] == 12) // send enter / ctrl+L clear
 		{
-			if (conform_quote(stin) != 0)
+			if (buff[0] == 12)
+				tputs(tgetstr("cl", NULL), 1, print);
+			else
+				printf("\n");
+			if (buff[0] == 10 && conform_quote(stin) != 0)
 				ft_putstr("\n> ");
 			else
 			{
-	//			printf("%d   %d\n", data->cursor, data->scr_col);
 				end_line(data, stin, buff);
 				stin = conform(stin);
-				//printf("%s\n", stin);
 				return (stin);
 			}
 		}
@@ -223,9 +227,12 @@ char		*line_edit(t_data *data)
 			if (data->cursor > 0)
 			{
 				stin = delete_one(stin, data);
-				tputs(tgetstr("dc", NULL), 1, print);
-				tputs(tgetstr("le", NULL), 1, print);
-				data->cursor--;
+				move_left(data);
+				int m;
+				m = data->cursor;
+				tputs(tgetstr("sc", NULL), 1, print);
+				reset_line(data, stin);
+				data->cursor = m;
 			}
 		}
 		else if (ft_isprint(buff[0]) && buff[1] == '\0')//maybe allow only printable
