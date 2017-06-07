@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/23 19:43:22 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/07 21:19:49 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,7 @@ static void	sig(int rvalue, pid_t pid, char *stin)
 		ft_putchar_fd('\n', 2);
 	}
 }
-/*
-   static int signo;
 
-   static void kill_procs(int signo)
-   {
-   printf("KILL\n");
-   if (g_proc_pid)
-   kill(g_proc_pid, signo
-   }
-   */
 static void	exec_utility(char **env, char **stin, t_data *data)
 {
 	pid_t	pid;
@@ -78,10 +69,10 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	}
 	else if (pid > 0)
 	{
-		//		signo = pid;
-		//		signal(SIGINT, kill_procs);
-		data->lastpid = pid;
+		signo = pid;
 		wait(&rvalue);
+		if (data->lastpid != 0)
+			kill(data->lastpid, 9);
 		if (WIFEXITED(rvalue))
 			data->rvalue = WEXITSTATUS(rvalue);
 		else if (WIFSIGNALED(rvalue))
@@ -239,6 +230,7 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 				}
 				return (line);
 			}
+			d->lastpid = pid;
 			close (d->out);
 			d->in = fd[0];
 			old = line;
@@ -415,6 +407,32 @@ static void exec_redir(char **rdr, t_data *d)
 		j++;
 	}
 	ft_tabdel(&cmd);
+}
+
+int		get_proc(int sign)
+{
+	static int val = 2;
+
+	if (sign != 0)
+		val = sign;
+	return (val);
+}
+
+void kill_procs(int sig)
+{
+	if (sig == SIGINT)
+	{
+		if (signo > 0)
+			kill(signo, 9);
+		else
+		{
+			char buf[2];
+			get_proc(1);
+			buf[0] = 10;
+			buf[1] = 0;
+			ioctl(0, TIOCSTI, buf);
+		}
+	}
 }
 
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)

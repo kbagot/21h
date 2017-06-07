@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/06 20:19:34 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/07 18:40:54 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,8 @@ int				main(int ac, char **av, char **env)
 	t_data	*data;
 
 	data = ft_memalloc(sizeof(t_data));
+	data->lastpid = 0;
+	signal(SIGINT, kill_procs);
 	data->rvalue = 0;
 	data->hist = NULL;
 	if (ac == 1)

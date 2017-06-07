@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/06 19:51:16 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/07 20:16:32 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@
 # include <sys/ioctl.h>
 # include <fcntl.h>
 # include <signal.h>
+
+static int signo = 0;
 
 typedef struct		s_env
 {
@@ -105,5 +107,7 @@ void				move_left(t_data *data);
 void				move_right(t_data *data);
 void				reset_line(t_data *data, char *stin);
 void				cleaner(t_data *data);
+void				kill_procs(int sig);
+int					get_proc(int sign);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/19 14:22:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/22 20:07:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/07 13:55:49 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ char			**splitforquote(char const *s, char *c)
 				split[j][k++] = s[i++];}
 	//	printf("s6\n");
 			split[j++][k++] = '\0';
-			printf("%s\n", split[j - 1]);
+			//printf("%s\n", split[j - 1]);
 		}
 	//	printf("s7\n");
 	}

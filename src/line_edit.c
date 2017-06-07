@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/06 20:52:17 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/07 21:23:49 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	end_line(t_data *data, char *stin, char *buff)
 	tputs(tgetstr("ei", NULL), 1, print);
 	add_history(stin, data);
 	ft_strdel(&buff);
-	reset_term();
+	//	reset_term();
 }
 
 static void	make_conform(char **stin, int *i, int c, char *nst)
@@ -127,7 +127,7 @@ static int	conform_quote(char *s)
 	i = 0;
 	while (s && s[i])
 	{
-		if (quote == 0 && (s[i] == '\"' || s[i] == '\"'))
+		if (quote == 0 && (s[i] == '\'' || s[i] == '\"'))
 			quote = s[i];
 		else if (quote != 0 && s[i] == quote )
 			quote = 0;
@@ -170,6 +170,19 @@ static void	paste(t_data *data, char **stin)
 		writer(data, stin, data->clipboard);
 }
 
+static	void prompt(int sig)
+{
+	char buf[2];
+
+	if (sig == SIGINT)
+	{
+		get_proc(1);
+		buf[0] = 10;
+		buf[1] = 0;
+		ioctl(0, TIOCSTI, buf);
+	}
+}
+
 char		*line_edit(t_data *data)
 {
 	char	*buff;
@@ -184,6 +197,8 @@ char		*line_edit(t_data *data)
 	act_pos(data);
 	data->start_row = data->row;
 	data->start_col = data->col;
+	//signal(SIGINT, 
+	signal(SIGINT, prompt);
 	while (42)  // need \n
 	{
 		act_pos(data);
@@ -191,7 +206,7 @@ char		*line_edit(t_data *data)
 			data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);//ft_printf("%s\n", buff);
+		//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
@@ -209,6 +224,11 @@ char		*line_edit(t_data *data)
 			paste(data, &stin);
 		else if (buff[0] == 10 || buff[0] == 12) // send enter / ctrl+L clear
 		{
+			if (get_proc(0) == 1)
+			{
+				ft_strdel(&stin);
+				get_proc(2);
+			}
 			if (buff[0] == 12)
 				tputs(tgetstr("cl", NULL), 1, print);
 			else
