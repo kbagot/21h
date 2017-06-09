@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/07 21:23:49 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/09 19:18:11 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,7 @@ char		*line_edit(t_data *data)
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
 			move_by_word(data, stin, buff);
-		else if (buff[0] == 4)//ctrl + d [make exit]
+		else if (!stin && buff[0] == 4)//ctrl + d [make exit]
 		{
 			ft_strdel(&stin);
 			stin = ft_strdup("exit");
@@ -231,12 +231,13 @@ char		*line_edit(t_data *data)
 			}
 			if (buff[0] == 12)
 				tputs(tgetstr("cl", NULL), 1, print);
-			else
-				printf("\n");
 			if (buff[0] == 10 && conform_quote(stin) != 0)
+			{
 				ft_putstr("\n> ");
+			}
 			else
 			{
+				printf("\n");
 				end_line(data, stin, buff);
 				stin = conform(stin);
 				return (stin);

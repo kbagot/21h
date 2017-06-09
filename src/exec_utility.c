@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/07 21:19:49 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/09 19:11:52 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,10 +69,11 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	}
 	else if (pid > 0)
 	{
+		//printf("%d\n", pid);
 		signo = pid;
 		wait(&rvalue);
 		if (data->lastpid != 0)
-			kill(data->lastpid, 9);
+			kill(data->lastpid, SIGTERM);
 		if (WIFEXITED(rvalue))
 			data->rvalue = WEXITSTATUS(rvalue);
 		else if (WIFSIGNALED(rvalue))
@@ -296,35 +297,6 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 		close (d->out);
 }
 
-static void	here_document(char **cmd, t_data *d, int i)
-{// <<   - not done  emove tab
-	int up;
-	int fd[2];
-
-	pipe(fd);
-	d->in = fd[0];
-	if (i != 1)
-		up = ft_atoi(cmd[0]);
-	else
-		up = 0;
-	char *line;
-	ft_putstr("> ");
-	//	printf("%s\n", cmd[i]);
-	while (42)
-	{
-		line = line_edit(d);
-		if (line && (!ft_strcmp(line, cmd[i]) || !ft_strcmp(line, "exit")))
-			break ;
-		ft_putstr_fd(line, fd[1]);
-		ft_putchar_fd('\n', fd[1]);
-		ft_strdel(&line);
-		ft_putstr("\n> ");
-	}
-	close (fd[1]);
-	dup2(fd[0], up);
-	close(fd[0]);
-}
-
 static void	dup_output(char **cmd, t_data *d, int i)
 {
 	int up;
@@ -340,14 +312,14 @@ static void	dup_output(char **cmd, t_data *d, int i)
 		close (up);
 	else
 		d->out = ft_atoi(cmd[i]);
-	if (!isatty(d->out)) // && prompt me
-		ft_putstr_fd("bash: Bad file descriptor\n", 2);
-	else
-	{
+//	if (!isatty(d->out)) // && prompt me
+//		ft_putstr_fd("bash: Bad file descriptor\n", 2);
+//	else
+//	{
 		d->out = dup2(d->out, up);
 		if (!(d->out >= 0 && d->out <= 2))
 			close (d->out);
-	}
+//	}
 }
 
 static void	dup_input(char **cmd, t_data *d, int i)
@@ -365,14 +337,14 @@ static void	dup_input(char **cmd, t_data *d, int i)
 		close (up);
 	else
 		d->out = ft_atoi(cmd[i]);
-	if (!isatty(d->out)) // && prompt me
-		ft_putstr_fd("bash: Bad file descriptor\n", 2);
-	else
-	{
+//	if (!isatty(d->out)) // && prompt me
+//		ft_putstr_fd("bash: Bad file descriptor\n", 2);
+//	else
+//	{
 		d->out = dup2(d->out, up);
 		if (!(d->out >= 0 && d->out <= 2))
 			close (d->out);
-	}
+//	}
 }
 
 static void exec_redir(char **rdr, t_data *d)
@@ -396,9 +368,9 @@ static void exec_redir(char **rdr, t_data *d)
 			redir_input(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
 			append_redir_output(cmd, d, i);
-		else if (i >= 0 && (!ft_strcmp(cmd[i - 1], "<<") ||
-					!ft_strcmp(cmd[i - 1], "<<-")))
-			here_document(cmd, d, i);
+//		else if (i >= 0 && (!ft_strcmp(cmd[i - 1], "<<") ||
+//					!ft_strcmp(cmd[i - 1], "<<-")))
+//			here_document(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
 			dup_output(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
@@ -424,15 +396,23 @@ void kill_procs(int sig)
 	{
 		if (signo > 0)
 			kill(signo, 9);
-		else
-		{
-			char buf[2];
-			get_proc(1);
-			buf[0] = 10;
-			buf[1] = 0;
-			ioctl(0, TIOCSTI, buf);
-		}
 	}
+}
+
+static void reset_fd(t_data *data)
+{
+	dup2(data->stdin_cpy, 0);
+	close(data->stdin_cpy);
+	dup2(data->stdout_cpy, 1);
+	close(data->stdout_cpy);
+	dup2(data->stderr_cpy, 2);
+	close(data->stderr_cpy);
+	if (data->in != 0)
+		close (data->in);
+	if (data->out != 1)
+		close (data->out);
+	if (data->err != 2)
+		close (data->err);
 }
 
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
@@ -459,7 +439,10 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 		if (line->next)
 			_exit(data->rvalue);
 		else
+		{
+			reset_fd(data);
 			return ;// exit if pipe
+		}
 	}
 	tmp_env = master_env(*s_env, cstin, tmp_env);
 	if ((cstin = utility(cstin, *s_env)))
@@ -474,19 +457,6 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	int status;
 	int pid;
 	while ((pid = wait(&status)) > 0)
-	{
 		status = 0;;
-	}
-	dup2(data->stdin_cpy, 0);
-	close(data->stdin_cpy);
-	dup2(data->stdout_cpy, 1);
-	close(data->stdout_cpy);
-	dup2(data->stderr_cpy, 2);
-	close(data->stderr_cpy);
-	if (data->in != 0)
-		close (data->in);
-	if (data->out != 1)
-		close (data->out);
-	if (data->err != 2)
-		close (data->err);
+	reset_fd(data);
 } 

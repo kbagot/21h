@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/06 21:00:35 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/08 18:42:00 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,8 @@ int			builtin(char **cstin, t_env **env, char *stin, t_data *data)
 	}
 	else if (cstin[0] && (ft_strcmp(cstin[0], "cd") == 0))
 		return (exec_cd(cstin, *env));
-	else if (cstin[0] && (ft_strcmp(cstin[0], "echo") == 0 &&
-				ft_strlen(stin) > 5))
-		return (exec_echo(&stin[5]));
+	else if (cstin[0] && (ft_strcmp(cstin[0], "echo") == 0))
+		return (exec_echo(cstin));
 	else if (cstin[0] && ((ft_strcmp(cstin[0], "setenv") == 0) ||
 				ft_strcmp(cstin[0], "unsetenv") == 0))
 		return (exec_env(cstin, env));

@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/20 15:14:05 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/04 18:38:51 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/09 18:44:54 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,8 @@ static char	**path_init(t_env *s_env)
 		path = ft_strsplit(tmp, ':');
 		ft_strdel(&tmp);
 	}
-	else
-		path = ft_strsplit(_PATH_DEFPATH, ':');
+//	else
+//		path = ft_strsplit(_PATH_DEFPATH, ':');
 	return (path);
 }
 

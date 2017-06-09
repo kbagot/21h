@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/07 18:40:54 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/09 19:18:16 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,63 @@ static int	parse_error(char **stin)
 	return (1);
 }
 
+static void	heredoc(t_data *d, char **s, int j, int i)
+{
+	char *line;
+//	int up;
+	int fd[2];
+
+	pipe(fd);
+//	if (j != 0)
+//		up = ft_atoi(*s);
+//	else
+//		up = 0;
+	ft_putstr("> ");
+	//	printf("%s\n", cmd[i]);
+	while (42)
+	{
+		line = line_edit(d);
+		if (line && (!ft_strcmp(line, s[i + 1]) || !ft_strcmp(line, "exit")))
+			break ;
+		ft_putstr_fd(line, fd[1]);
+		ft_putchar_fd('\n', fd[1]);
+		ft_strdel(&line);
+		ft_putstr("> ");
+	}
+	close (fd[1]);
+	s[i] = ft_strjoin(ft_strsub(s[i], 0, j), "&");
+	s[i + 1] = ft_itoa(fd[0]);
+//	printf("%s\n", s[i]);
+	//dup2(fd[0], up);
+	//close(fd[0]);
+}
+
+static void	creat_heredoc(t_data *d, char **s)
+{
+	int i;
+	int j;
+
+	d->in = 0;
+	i = 0;
+	while (s && s[i])
+	{
+		if (s[i][0] == '\"' || s[i][0] == '\'')
+			i++;
+		else
+		{
+			j = 0;
+			while (s[i][j])
+			{
+				if (!ft_strncmp(&s[i][j], "<<", 2))
+								heredoc(d, s, j + 1, i);
+//	printf("%s\n", s[i]);}
+					j++;
+			}
+			i++;
+		}
+	}
+}
+
 void		show_prompt(t_env *s_env, t_data *data)
 {
 	char	*stin;
@@ -160,6 +217,14 @@ void		show_prompt(t_env *s_env, t_data *data)
 			while (stin && septin[i])
 			{
 				cstin = splitforquote(septin[i], " \t\n");
+				creat_heredoc(data, cstin);
+				int lol;
+				lol= 0;
+			//	while (cstin[lol])
+			//	{
+			//	ft_printf("[%s]\n", cstin[lol]);
+			//		lol++;}
+				signal(SIGINT, kill_procs);
 				//cstin = strquotesplit(septin[i], " \t\n");
 				//int lol;
 				//lol=0;
@@ -169,6 +234,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 				set(cstin, s_env);
 				parse_entry(&s_env, cstin, septin[i], data);
 				ft_tabdel(&cstin);
+				kill(0, SIGINT);
 				i++;
 			}
 		}
