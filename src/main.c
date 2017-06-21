@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/09 19:18:16 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/10 14:08:16 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,28 @@ static void	creat_heredoc(t_data *d, char **s)
 	}
 }
 
+static	void prompt(int sig)
+{
+	char buf[2];
+
+	if (sig == SIGINT)
+	{
+		get_proc(1);
+		buf[0] = 10;
+		buf[1] = 0;
+		ioctl(0, TIOCSTI, buf);
+	}
+}
+
+static void nkill_procs(int sig)
+{
+	if (sig == SIGINT)
+	{
+		if (signo > 0)
+			kill(signo, 9);
+	}
+}
+
 void		show_prompt(t_env *s_env, t_data *data)
 {
 	char	*stin;
@@ -210,7 +232,9 @@ void		show_prompt(t_env *s_env, t_data *data)
 					&(ft_strrchr(search->value, '/')[1]));
 		else
 			ft_printf("\033[0;36m[]> \033[0m");
+		signal(SIGINT, prompt);
 		stin = line_edit(data);
+		signal(SIGINT, kill_procs);
 		septin = strquotesplit(stin, ";");//use stin fot history
 		if (parse_error(septin)) // token
 		{
@@ -224,7 +248,6 @@ void		show_prompt(t_env *s_env, t_data *data)
 			//	{
 			//	ft_printf("[%s]\n", cstin[lol]);
 			//		lol++;}
-				signal(SIGINT, kill_procs);
 				//cstin = strquotesplit(septin[i], " \t\n");
 				//int lol;
 				//lol=0;
@@ -234,10 +257,11 @@ void		show_prompt(t_env *s_env, t_data *data)
 				set(cstin, s_env);
 				parse_entry(&s_env, cstin, septin[i], data);
 				ft_tabdel(&cstin);
-				kill(0, SIGINT);
 				i++;
 			}
 		}
+		signal(SIGINT, nkill_procs);
+		kill(0, SIGINT);
 		ft_tabdel(&septin);
 		ft_strdel(&stin);
 	}
@@ -252,7 +276,6 @@ int				main(int ac, char **av, char **env)
 
 	data = ft_memalloc(sizeof(t_data));
 	data->lastpid = 0;
-	signal(SIGINT, kill_procs);
 	data->rvalue = 0;
 	data->hist = NULL;
 	if (ac == 1)

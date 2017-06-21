@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/08 18:35:14 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/09 20:26:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef struct		s_data
 	int				stdout_cpy;
 	int				stderr_cpy;
 	int				lastpid;
+	struct termios	stored_settings;
 }					t_data;
 
 typedef struct		s_line // line piped
@@ -91,8 +92,8 @@ void				addtmp_env(char **cstin, char *add, t_env **tmp_env,
 		int del);
 int					exec_cd(char **cstin, t_env *env);
 char				*line_edit(t_data *data);
-void				init_term(void);
-void				reset_term(void);
+void				init_term(t_data *d);
+void				reset_term(t_data *d);
 void				arrow_key(t_data *data, char **stin, char *buff);
 int					print(int c);
 void				copy_cut(t_data *data, char **stin, char *buff);

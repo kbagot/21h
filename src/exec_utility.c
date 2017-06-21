@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/09 19:11:52 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/10 14:08:17 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	}
 	else if (pid > 0)
 	{
-		//printf("%d\n", pid);
 		signo = pid;
 		wait(&rvalue);
 		if (data->lastpid != 0)
@@ -95,7 +94,6 @@ static void		find_pipe(char **cstin, int *j, int *k)
 			*j += 1;
 		i++;
 	}
-	//	printf("[%d]  [%d]\n", *j, *k);
 }
 
 static void		stock_redir_fd(t_line *line, char **cstin, int *k, char *c)
@@ -108,7 +106,6 @@ static void		stock_redir_fd(t_line *line, char **cstin, int *k, char *c)
 	line->redirect[*k] = join(ft_strjoin(tmp, " "), tmp2, cstin[1]);
 	ft_strdel(&tmp);
 	ft_strdel(&tmp2);
-	//	printf("zx[%s]\n", line->redirect[*k-1]);
 	*k += 1;
 }
 
@@ -131,8 +128,6 @@ static void		stock_redir(char **cstin, t_line *line, int *j, int *k)
 			line->proc[*j] = ft_strsub(*cstin, 0, c - *cstin);
 			line->redirect[*k] = join(ft_strdup(&cstin[0][c - *cstin]), " ",
 					cstin[1]);
-			//			printf("qw[%s] [%s]\n", line->proc[*j - 1],
-			//			line->redirect[*k - 1]);
 			*j += 1;
 			*k += 1;
 		}
@@ -312,14 +307,9 @@ static void	dup_output(char **cmd, t_data *d, int i)
 		close (up);
 	else
 		d->out = ft_atoi(cmd[i]);
-//	if (!isatty(d->out)) // && prompt me
-//		ft_putstr_fd("bash: Bad file descriptor\n", 2);
-//	else
-//	{
 		d->out = dup2(d->out, up);
 		if (!(d->out >= 0 && d->out <= 2))
 			close (d->out);
-//	}
 }
 
 static void	dup_input(char **cmd, t_data *d, int i)
@@ -337,14 +327,9 @@ static void	dup_input(char **cmd, t_data *d, int i)
 		close (up);
 	else
 		d->out = ft_atoi(cmd[i]);
-//	if (!isatty(d->out)) // && prompt me
-//		ft_putstr_fd("bash: Bad file descriptor\n", 2);
-//	else
-//	{
-		d->out = dup2(d->out, up);
-		if (!(d->out >= 0 && d->out <= 2))
-			close (d->out);
-//	}
+	d->out = dup2(d->out, up);
+	if (!(d->out >= 0 && d->out <= 2))
+		close (d->out);
 }
 
 static void exec_redir(char **rdr, t_data *d)
@@ -368,9 +353,6 @@ static void exec_redir(char **rdr, t_data *d)
 			redir_input(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
 			append_redir_output(cmd, d, i);
-//		else if (i >= 0 && (!ft_strcmp(cmd[i - 1], "<<") ||
-//					!ft_strcmp(cmd[i - 1], "<<-")))
-//			here_document(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
 			dup_output(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
@@ -390,12 +372,16 @@ int		get_proc(int sign)
 	return (val);
 }
 
+
 void kill_procs(int sig)
 {
 	if (sig == SIGINT)
 	{
 		if (signo > 0)
+		{
 			kill(signo, 9);
+			ft_putchar('\n');
+		}
 	}
 }
 
@@ -441,7 +427,7 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 		else
 		{
 			reset_fd(data);
-			return ;// exit if pipe
+			return ;
 		}
 	}
 	tmp_env = master_env(*s_env, cstin, tmp_env);

@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/09 19:18:11 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/06/10 14:17:09 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ static void	end_line(t_data *data, char *stin, char *buff)
 	tputs(tgetstr("ei", NULL), 1, print);
 	add_history(stin, data);
 	ft_strdel(&buff);
-	//	reset_term();
+	reset_term(data);
 }
 
 static void	make_conform(char **stin, int *i, int c, char *nst)
@@ -170,19 +170,6 @@ static void	paste(t_data *data, char **stin)
 		writer(data, stin, data->clipboard);
 }
 
-static	void prompt(int sig)
-{
-	char buf[2];
-
-	if (sig == SIGINT)
-	{
-		get_proc(1);
-		buf[0] = 10;
-		buf[1] = 0;
-		ioctl(0, TIOCSTI, buf);
-	}
-}
-
 char		*line_edit(t_data *data)
 {
 	char	*buff;
@@ -191,14 +178,11 @@ char		*line_edit(t_data *data)
 	stin = NULL;
 	buff = ft_strnew(6);
 	data->cursor = 0;
-	init_term();
-	//tputs(tgetstr("im", NULL), 1, print);
+	init_term(data);
 	tputs(tgetstr("sc", NULL), 1, print);
 	act_pos(data);
 	data->start_row = data->row;
 	data->start_col = data->col;
-	//signal(SIGINT, 
-	signal(SIGINT, prompt);
 	while (42)  // need \n
 	{
 		act_pos(data);
@@ -237,7 +221,7 @@ char		*line_edit(t_data *data)
 			}
 			else
 			{
-				printf("\n");
+				ft_putchar('\n');
 				end_line(data, stin, buff);
 				stin = conform(stin);
 				return (stin);
