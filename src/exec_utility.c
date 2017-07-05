@@ -12,6 +12,8 @@
 
 #include "sh.h"
 
+extern int signo;
+
 static int	invalid_exec(char **stin, char **env, t_data *data)
 {
 	if ((stin[0] && (access(stin[0], X_OK) == -1)) || !stin[0])

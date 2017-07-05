@@ -28,9 +28,7 @@ void		ft_putoctal(unsigned long long int n, t_prt *prt)
 void		ft_puthexa(unsigned long long int n, char c, t_prt *prt)
 {
 	int ccase;
-	int length;
 
-	length = 0;
 	if (c == 'X')
 		ccase = 55;
 	else

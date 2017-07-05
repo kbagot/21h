@@ -42,7 +42,7 @@ typedef struct	s_flag
 	int		z;
 }				t_flag;
 
-int				ft_printf(const char *restrict format, ...);
+int				ft_printf(const char *format, ...);
 void			make_specifier(va_list ap, t_prt *prt);
 void			add_prt(t_prt *prt, t_flag *flag);
 void			init_sub_specif(t_flag *flag, t_prt *prt, va_list ap);

@@ -14,14 +14,13 @@
 
 void	init_term(t_data *d)
 {
-	int				ret;
 	char			t_buff[1024];
 	struct termios	term;
 	char			*term_name;
 
 	if ((term_name = getenv("TERM")) == NULL)
 		term_name = "xterm-256color";
-	ret = tgetent(t_buff, term_name);
+	tgetent(t_buff, term_name);
 	tcgetattr(0, &term);
 	d->stored_settings = term;
 	term.c_lflag &= ~(ECHO | ICANON);

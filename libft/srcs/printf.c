@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static int	no_specif(t_prt *prt, int j, int pp, const char *restrict format)
+static int	no_specif(t_prt *prt, int j, int pp, const char *format)
 {
 	char space;
 
@@ -41,7 +41,7 @@ static int	no_specif(t_prt *prt, int j, int pp, const char *restrict format)
 		return (j - 1);
 }
 
-static int	b_parse(t_prt *prt, va_list ap, int j, const char *restrict format)
+static int	b_parse(t_prt *prt, va_list ap, int j, const char *format)
 {
 	int pp;
 
@@ -59,7 +59,7 @@ static int	b_parse(t_prt *prt, va_list ap, int j, const char *restrict format)
 	return (prt->index);
 }
 
-static int	send_prt(t_prt *prt, int j, va_list ap, const char *restrict format)
+static int	send_prt(t_prt *prt, int j, va_list ap, const char *format)
 {
 	int pcharc;
 
@@ -88,7 +88,7 @@ static int	send_prt(t_prt *prt, int j, va_list ap, const char *restrict format)
 	return (pcharc);
 }
 
-int			ft_printf(const char *restrict format, ...)
+int			ft_printf(const char *format, ...)
 {
 	t_prt	*prt;
 	va_list	ap;

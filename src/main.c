@@ -12,6 +12,8 @@
 
 #include "sh.h"
 
+int signo = 0;
+
 static void		ms_dat(t_env *new_env, char **env, int i, int j)
 {
 	if ((ft_strcmp(new_env->name, "SHELL")) == 0)
@@ -242,8 +244,8 @@ void		show_prompt(t_env *s_env, t_data *data)
 			{
 				cstin = splitforquote(septin[i], " \t\n");
 				creat_heredoc(data, cstin);
-				int lol;
-				lol= 0;
+			//	int lol;
+				//lol= 0;
 			//	while (cstin[lol])
 			//	{
 			//	ft_printf("[%s]\n", cstin[lol]);
@@ -278,7 +280,7 @@ int				main(int ac, char **av, char **env)
 	data->lastpid = 0;
 	data->rvalue = 0;
 	data->hist = NULL;
-	if (ac == 1)
+	if (ac == 1 && av)
 	{
 		av = NULL;
 		s_env = NULL;

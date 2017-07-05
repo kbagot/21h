@@ -14,10 +14,8 @@
 
 void	make_specifier(va_list ap, t_prt *prt)
 {
-	int		n;
 	t_flag	*flag;
 
-	n = 0;
 	prt->ispec = 0;
 	flag = (t_flag*)malloc(sizeof(t_flag));
 	init_sub_specif(flag, prt, ap);

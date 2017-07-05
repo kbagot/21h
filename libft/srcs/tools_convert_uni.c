@@ -52,7 +52,7 @@ void		wint_to_char(wint_t wchar, t_prt *prt, t_flag *flag)
 	}
 	else
 	{
-		prt->spec = ft_strnew(ft_wbitslen(&wchar));
+		prt->spec = ft_strnew(ft_wbitslen((wchar_t *)&wchar));
 		ft_strwchar(wchar, prt->spec, 0);
 	}
 }

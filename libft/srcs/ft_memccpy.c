@@ -32,7 +32,7 @@ void	*ft_memccpy(void *dest, const void *src, int c, size_t n)
 	if (s[i] == c && i < n)
 	{
 		d[i] = c;
-		return (&dest[i + 1]);
+		return (&d[i + 1]);
 	}
 	return (NULL);
 }

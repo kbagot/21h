@@ -24,8 +24,9 @@
 # include <sys/ioctl.h>
 # include <fcntl.h>
 # include <signal.h>
-
-static int signo = 0;
+# include <sys/types.h>
+# include <sys/wait.h>
+#include <sys/ioctl.h>
 
 typedef struct		s_env
 {
