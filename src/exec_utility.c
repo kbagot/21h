@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/10 14:08:17 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/08/15 19:32:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,47 +294,63 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 		close (d->out);
 }
 
-static void	dup_output(char **cmd, t_data *d, int i)
+static int	dup_output(char **cmd, t_data *d, int i)
 {
-	int up;
+	int n;
+	int w;
 
+	//printf("[%s][%s][%s] %d \n", cmd[0], cmd[1], cmd[2], i);
 	if (i != 1)
-		up = ft_atoi(cmd[0]);
+		n = ft_atoi(cmd[0]);
 	else
-		up = 1;
-	if (!(ft_isnbr(cmd[i])) && ft_strcmp(cmd[i], "-"))
-		d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
-				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-	else if (!ft_strcmp(cmd[i], "-"))
-		close (up);
-	else
-		d->out = ft_atoi(cmd[i]);
-		d->out = dup2(d->out, up);
-		if (!(d->out >= 0 && d->out <= 2))
-			close (d->out);
+		n = 1;
+	if (!ft_strcmp(cmd[i], "-"))
+		close (n);
+	if (ft_isnbr(cmd[i]))
+	{
+		int t;
+		t = -1;
+	//ft_printf("%d\n", d->out);
+		w = ft_atoi(cmd[i]);
+	//		printf("%d \n", d->out);
+		if ((w >= 10 && w <= 12) || (t = dup(w)) == -1)
+		{
+	//		printf("%d \n", t);
+	//		printf("%d \n", w);
+			ft_putstr_fd("21sh: ", 2);
+			ft_putnbr_fd(w, 2);
+			ft_putstr_fd(": Bad file descriptor\n", 2);
+			return (1);
+		}
+		if (t != -1)
+		{
+	//		printf("%ddelt \n", t);
+			close (t);
+		}
+			dup2(w, n);
+	}
+	return (0);
 }
 
-static void	dup_input(char **cmd, t_data *d, int i)
-{
+static int	dup_input(char **cmd, t_data *d, int i)
+{ //mirror of upper fct 
 	int up;
 
 	if (i != 1)
 		up = ft_atoi(cmd[0]);
 	else
 		up = 0;
-	if (!(ft_isnbr(cmd[i])) && ft_strcmp(cmd[i], "-"))
-		d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
-				S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
-	else if (!ft_strcmp(cmd[i], "-"))
+	if (!ft_strcmp(cmd[i], "-"))
 		close (up);
-	else
+	else if (ft_isnbr(cmd[i]))
+	{
 		d->out = ft_atoi(cmd[i]);
-	d->out = dup2(d->out, up);
-	if (!(d->out >= 0 && d->out <= 2))
-		close (d->out);
+		d->out = dup2(d->out, up);
+	}
+	return (0);
 }
 
-static void exec_redir(char **rdr, t_data *d)
+static int exec_redir(char **rdr, t_data *d)
 {
 	int i;
 	int j;
@@ -356,13 +372,16 @@ static void exec_redir(char **rdr, t_data *d)
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
 			append_redir_output(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
-			dup_output(cmd, d, i);
+		{if (dup_output(cmd, d, i))
+				return (1);}
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
-			dup_input(cmd, d, i);
+		{if (dup_input(cmd, d, i))
+				return (1);}
 		i = 0;
 		j++;
 	}
 	ft_tabdel(&cmd);
+	return (0);
 }
 
 int		get_proc(int sign)
@@ -395,12 +414,13 @@ static void reset_fd(t_data *data)
 	close(data->stdout_cpy);
 	dup2(data->stderr_cpy, 2);
 	close(data->stderr_cpy);
-	if (data->in != 0)
-		close (data->in);
-	if (data->out != 1)
-		close (data->out);
-	if (data->err != 2)
-		close (data->err);
+//	ft_printf("%d %d %d \n", data->in , data->out, data->err); Should keep it ?
+//	if (data->in != 0)
+//		close (data->in);
+//	if (data->out != 1)
+//		close (data->out);
+//	if (data->err != 2)
+//		close (data->err);
 }
 
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
@@ -419,13 +439,14 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	data->err = 2;
 	line = split_pipe(cstin);
 	line = fork_pipes(line, data);
-	exec_redir(line->redirect, data);
 	cstin = line->proc;
 	tmp_env = NULL;
-	if ((data->rvalue = builtin(cstin, s_env, stin, data)))
+	if ((data->rvalue = exec_redir(line->redirect, data)) || (data->rvalue = builtin(cstin, s_env, stin, data)))
 	{
 		if (line->next)
+		{
 			_exit(data->rvalue);
+		}
 		else
 		{
 			reset_fd(data);
@@ -445,6 +466,6 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	int status;
 	int pid;
 	while ((pid = wait(&status)) > 0)
-		status = 0;;
+		status = 0;
 	reset_fd(data);
-} 
+}

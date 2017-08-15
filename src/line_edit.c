@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/10 14:17:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/08/15 19:38:21 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,12 +190,12 @@ char		*line_edit(t_data *data)
 			data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		//ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
+		ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
 			move_by_word(data, stin, buff);
-		else if (!stin && buff[0] == 4)//ctrl + d [make exit]
+		else if ((!stin || (stin && stin[0] == '\0')) && buff[0] == 4)//ctrl + d [make exit]
 		{
 			ft_strdel(&stin);
 			stin = ft_strdup("exit");
