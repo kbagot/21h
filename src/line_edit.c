@@ -190,7 +190,7 @@ char		*line_edit(t_data *data)
 			data->line_count = ((int)ft_strlen(stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
+	//	ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
 		if (buff[0] == 27 && buff[1] == 91)//arrow
 			arrow_key(data, &stin, buff);
 		else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B

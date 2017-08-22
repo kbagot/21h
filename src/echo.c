@@ -19,7 +19,7 @@ int			exec_echo(char **stin)
 	i = 1;
 	while (stin[i])
 	{
-		ft_printf("%s ", stin[i]);
+		ft_printf("%s", stin[i]);
 		i++;
 	}
 	ft_putchar('\n');

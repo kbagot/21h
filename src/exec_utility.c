@@ -299,6 +299,7 @@ static int	dup_output(char **cmd, t_data *d, int i)
 	int n;
 	int w;
 
+	d->out = 1;
 	//printf("[%s][%s][%s] %d \n", cmd[0], cmd[1], cmd[2], i);
 	if (i != 1)
 		n = ft_atoi(cmd[0]);
