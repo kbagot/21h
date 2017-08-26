@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/09 20:26:23 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/08/26 21:18:17 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,13 @@ typedef struct		s_hist
 	struct s_hist	*next;
 	struct s_hist	*before;
 }					t_hist;
+
+typedef struct		s_edit
+{
+	char	*buff;
+	char	*stin;
+	int		ler;
+}					t_edit;
 
 void				parse_entry(t_env **s_env, char **cstin, char *stin,
 		t_data *data);
