@@ -429,6 +429,9 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	t_env	*tmp_env;
 	t_line	*line;
 
+
+
+
 	data->stdin_cpy = 10;
 	data->stdout_cpy = 11;
 	data->stderr_cpy = 12;
@@ -442,7 +445,12 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	line = fork_pipes(line, data);
 	cstin = line->proc;
 	tmp_env = NULL;
-	if ((data->rvalue = exec_redir(line->redirect, data)) || (data->rvalue = builtin(cstin, s_env, stin, data)))
+
+
+
+
+
+if ((data->rvalue = exec_redir(line->redirect, data)) || (data->rvalue = builtin(cstin, s_env, stin, data)))
 	{
 		if (line->next)
 		{
@@ -454,6 +462,11 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 			return ;
 		}
 	}
+
+
+
+
+
 	tmp_env = master_env(*s_env, cstin, tmp_env);
 	if ((cstin = utility(cstin, *s_env)))
 		exec_utility(list_to_tab(tmp_env), cstin, data);
@@ -463,6 +476,9 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	ft_tabdel(&line->proc);
 	ft_tabdel(&line->redirect);
 	free(line);
+
+
+
 
 	int status;
 	int pid;

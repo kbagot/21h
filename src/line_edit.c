@@ -264,7 +264,7 @@ char		*line_edit(t_data *data)
 			data->line_count = ((int)ft_strlen(e->stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(e->buff, 6);
 		read(0, e->buff, 5);
-		//	ft_printf("{%d-%d-%d-%d-%d}\n", buff[0], buff[1], buff[2], buff[3], buff[4]);ft_printf("%s\n", buff);
+		//ft_printf("{%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4]);ft_printf("%s\n", e->buff);
 		if (l_edit_1(e->buff, &e->stin, data))
 		{
 			if ((e->ler = l_edit_2(e->buff, &e->stin, data)) || e->ler == 2)

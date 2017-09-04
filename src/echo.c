@@ -20,6 +20,8 @@ int			exec_echo(char **stin)
 	while (stin[i])
 	{
 		ft_printf("%s", stin[i]);
+		if (stin[i + 1])
+			ft_putchar(' ');
 		i++;
 	}
 	ft_putchar('\n');
