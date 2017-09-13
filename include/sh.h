@@ -80,6 +80,17 @@ typedef struct		s_edit
 	int		ler;
 }					t_edit;
 
+typedef struct		s_split
+{
+	char const		*s;
+	char			*c;
+	int				i;
+	int				j;
+	int				k;
+	char			**split;
+	int				quote;
+}					t_split;
+
 void				parse_entry(t_env **s_env, char **cstin, char *stin,
 		t_data *data);
 t_env				*search_env(t_env *env, char *name);

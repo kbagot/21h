@@ -190,8 +190,8 @@ static t_line	*split_pipe(char **cstin)
 			save = line;
 		}
 		find_pipe(&cstin[i], &j, &k);
-		line->proc = (char**)malloc(sizeof(char*) * j + 1);
-		line->redirect = (char**)malloc(sizeof(char*) * k + 1);
+		line->proc = (char**)malloc(sizeof(char*) * (j + 1));
+		line->redirect = (char**)malloc(sizeof(char*) * (k + 1));
 		separate_line(cstin, &i, line);
 		line->next = NULL;
 		if (!cstin[i])
@@ -296,7 +296,7 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 		close (d->out);
 }
 
-static int	dup_output(char **cmd, t_data *d, int i)
+static int	dup_output(char **cmd, int i)
 {
 	int n;
 	int w;
@@ -334,7 +334,7 @@ static int	dup_output(char **cmd, t_data *d, int i)
 	return (0);
 }
 
-static int	dup_input(char **cmd, t_data *d, int i)
+static int	dup_input(char **cmd, int i)
 { //mirror of upper fct 
 	int n;
 	int w;
@@ -394,11 +394,15 @@ static int exec_redir(char **rdr, t_data *d)
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
 			append_redir_output(cmd, d, i);
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
-		{if (dup_output(cmd, d, i))
-			return (1);}
+		{
+			if (dup_output(cmd, i))
+				return (1);
+		}
 		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
-		{if (dup_input(cmd, d, i))
-			return (1);}
+		{
+			if (dup_input(cmd, i))
+				return (1);
+		}
 		i = 0;
 		j++;
 	}

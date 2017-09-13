@@ -148,7 +148,7 @@ void		act_pos(t_data *d)
 	ioctl(0, TIOCGWINSZ, &sz);
 	d->scr_row = sz.ws_row;
 	d->scr_col = sz.ws_col;
-	ft_printf("\E[6n");
+	ft_putstr("\E[6n");
 	while (ft_strchr(buff, 'R') == NULL)
 	{
 		ft_bzero(buff, 10);

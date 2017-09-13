@@ -80,60 +80,75 @@ static int		f_m(char const *str, char *c)
 	return (mot);
 }
 
-static int  stock_q(int *i, int *j, char **split, char const *s)
+static int  stock_q(t_split *stk, char **split, char const *s)
 {
 	int		quote;
-	int		k;
 
-	k = 0;
 	quote = 0;
-	quote = s[*i];
-	if (s[*i] == '\"' || s[*i] == '\'')
+	quote = s[stk->i];
+	if (s[stk->i] == '\"' || s[stk->i] == '\'')
 	{
-		split[*j][k++] = s[*i];
-		*i += 1;
-		while (s[*i] && s[*i] != quote)
+		split[stk->j][stk->k++] = s[stk->i];
+		stk->i++;
+		while (s[stk->i] && s[stk->i] != quote)
 		{
-			split[*j][k++] = s[*i];
-			*i += 1;
+			split[stk->j][stk->k++] = s[stk->i];
+		stk->i++;
 		}
-		*i += 1;
-		return (k);
+		stk->i++;
+		return (0);
 	}
-	return (0);
+	return (1);
+}
+
+static void stock_no_q(char **split, t_split *stk)
+{
+	char const *s;
+	char *c;
+
+	s = stk->s;
+	c = stk->c;
+	while (s[stk->i] && ft_strchr(c, s[stk->i]) == NULL)
+	{
+		if (s[stk->i] == '\'' || s[stk->i] == '\"')
+			break ;
+		split[stk->j][stk->k++] = s[stk->i];
+		stk->i++;
+	}
+}
+
+static void init_splt(t_split *stk, char const *s, char *c)
+{
+	stk->s = s;
+	stk->c = c;
+	stk->i = 0;
+	stk->j = 0;
 }
 
 char			**splitforquote(char const *s, char *c)
 {
-	int		i;
-	int		j;
-	int		k;
 	char	**split;
+	t_split	*stk;
 
-	i = 0;
-	j = 0;
 	if (s == NULL || (split = malloc(sizeof(char*) * (f_m(s, c) + 1))) == NULL)
 		return (NULL);
-	while (s[i])
+	stk = ft_memalloc(sizeof(t_split));
+	init_splt(stk, s, c);
+	while (s[stk->i])
 	{
-		k = 0;
-		while (s[i] && ft_strchr(c, s[i]))
-			i++;
-		if (s[i])
+		stk->k = 0;
+		while (s[stk->i] && ft_strchr(c, s[stk->i]))
+			stk->i++;
+		if (s[stk->i])
 		{
-			if ((split[j] = malloc(sizeof(char) * (f_l(s, i, c) + 1))) == NULL)
+			if ((split[stk->j] = malloc(sizeof(char) * (f_l(s, stk->i, c) + 1))) == NULL)
 				return (NULL);
-			if (!(k = stock_q(&i, &j, split, s)))
-				while (s[i] && ft_strchr(c, s[i]) == NULL)
-				{
-					if (s[i] == '\'' || s[i] == '\"')
-						break ;
-					split[j][k++] = s[i++];
-				}
-			split[j++][k++] = '\0';
+			if (stock_q(stk , split, s))
+				stock_no_q(split, stk);
+			split[stk->j++][stk->k++] = '\0';
 		}
 	}
-	split[j] = NULL;
+	split[stk->j] = NULL;
 	return (split);
 }
 /*

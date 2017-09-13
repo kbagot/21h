@@ -95,7 +95,7 @@ int			ft_printf(const char *format, ...)
 	int		j;
 	int		pcharc;
 
-	prt = (t_prt*)malloc(sizeof(t_prt));
+	prt = ft_memalloc(sizeof(t_prt));
 	pcharc = 0;
 	prt->index = 0;
 	j = 0;
@@ -103,8 +103,12 @@ int			ft_printf(const char *format, ...)
 	prt->returnvalue = 0;
 	pcharc = send_prt(prt, j, ap, format);
 	va_end(ap);
-	free(prt);
 	if (pcharc == -1)
+	{
+		free(prt);
 		return (0);
-	return (prt->returnvalue + pcharc);
+	}
+	pcharc += prt->returnvalue;
+	free(prt);
+	return (pcharc);
 }

@@ -42,7 +42,6 @@ static int		f_m(char const *str, char *c)
 	i = 0;
 	while (str[i])
 	{
-//	ft_printf("%s\n", &str[i]);
 		while (str[i] && ft_strchr(c, str[i]))
 			i++;
 		if (str[i])
@@ -55,54 +54,63 @@ static int		f_m(char const *str, char *c)
 					quote = 0;
 				i++;
 			}
-		mot++;
+			mot++;
 		}
 	}
 	return (mot);
 }
 
+static void stock(t_split *stk, char const *s, char *c, char **split)
+{
+	while (s[stk->i] && (stk->quote != 0 || ft_strchr(c, s[stk->i]) == NULL))
+	{
+		if ((s[stk->i] == '\'' || s[stk->i] == '\"') && stk->quote == 0)
+			stk->quote = s[stk->i];
+		else if (s[stk->i] == stk->quote)
+			stk->quote = 0;
+		split[stk->j][stk->k++] = s[stk->i++];
+	}
+
+}
+
+static void init_splt(t_split *stk, char const *s, char *c)
+{
+	stk->s = s;
+	stk->c = c;
+	stk->i = 0;
+	stk->j = 0;
+	stk->quote = 0;
+}
+
 char			**strquotesplit(char const *s, char *c)
 {
-	int		i;
-	int		j;
-	int		k;
+	t_split	*stk;
 	char	**split;
-	int		quote;
 
-	quote = 0;
-	i = 0;
-	j = 0;
-//	ft_printf("s\n");
 	if (s == NULL || (split = malloc(sizeof(char*) * (f_m(s, c) + 1))) == NULL)
 		return (NULL);
-//	ft_printf("s1  %d\n", f_m(s, c));
-	while (s[i])
+	stk = ft_memalloc(sizeof(t_split));
+	init_splt(stk, s, c);
+	while (s[stk->i])
 	{
-		while (s[i] && ft_strchr(c, s[i]))
-			i++;
-		if (s[i])
+		while (s[stk->i] && ft_strchr(c, s[stk->i]))
+			stk->i++;
+		if (s[stk->i])
 		{
-			k = 0;
-			quote = 0;
-			if ((split[j] = malloc(sizeof(char) * (f_l(s, i, c) + 1))) == NULL)
+			stk->k = 0;
+			stk->quote = 0;
+			if ((split[stk->j] = malloc(sizeof(char) * (f_l(s, stk->i, c) + 1))) == NULL)
 				return (NULL);
-			while (s[i] && (quote != 0 || ft_strchr(c, s[i]) == NULL))
-			{
-				if ((s[i] == '\'' || s[i] == '\"') && quote == 0)
-					quote = s[i];
-				else if (s[i] == quote)
-					quote = 0;
-				split[j][k++] = s[i++];
-			}
-			split[j++][k++] = '\0';
+			stock(stk, s, c, split);
+			split[stk->j++][stk->k++] = '\0';
 		}
 	}
-	split[j] = NULL;
+	split[stk->j] = NULL;
 	return (split);
 }
 /*
-int main(int ac, char **av)
-{
-	ft_printf("SALUT\n");
-	char **lol;if (ac == 2){	lol = strquotesplit(av[1], ";");if(lol)while(*lol){printf("[%s]\n", *lol);lol++;}}return (0);
-}*/
+   int main(int ac, char **av)
+   {
+   ft_printf("SALUT\n");
+   char **lol;if (ac == 2){	lol = strquotesplit(av[1], ";");if(lol)while(*lol){printf("[%s]\n", *lol);lol++;}}return (0);
+   }*/
