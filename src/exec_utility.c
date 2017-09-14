@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 18:44:22 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 19:09:31 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,29 +139,33 @@ static void		stock_redir(char **cstin, t_line *line, int *j, int *k)
 	}
 }
 
+static void		sep_line_stck(t_line *line, int *j, char **cstin, int *i)
+{
+	if (ft_strchr("\'\"", cstin[*i][0]))
+		line->proc[*j] = ft_strdup(&cstin[*i][1]);
+	else
+		line->proc[*j] = ft_strdup(cstin[*i]);
+	*j += 1;
+}
+
 static void		separate_line(char **cstin, int *i, t_line *line)
 {
-	int j;
-	int k;
-	char *c;
+	int		j;
+	int		k;
+	char	*c;
 
 	k = 0;
 	j = 0;
 	while (cstin[*i] && (ft_strcmp(cstin[*i], "|") != 0))
 	{//add redirect cmd
-		if (!ft_strchr("\'\"", cstin[*i][0]) &&
-				((c = ft_strchr(cstin[*i], '>')) || (c = ft_strchr(cstin[*i], '<'))))
+		if (!ft_strchr("\'\"", cstin[*i][0]) && ((c = ft_strchr(cstin[*i], '>'))
+					|| (c = ft_strchr(cstin[*i], '<'))))
 		{
 			stock_redir(&cstin[*i], line, &j, &k);
 			*i += 1;
 		}
 		else
-		{
-			if (ft_strchr("\'\"", cstin[*i][0]))
-				line->proc[j++] = ft_strdup(&cstin[*i][1]);
-			else
-				line->proc[j++] = ft_strdup(cstin[*i]);
-		}
+			sep_line_stck(line, &j, cstin, i);
 		if (!cstin[*i])
 			break ;
 		*i += 1;
