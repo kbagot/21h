@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/06 14:40:10 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 18:44:22 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-extern int signo;
+extern int g_signo;
 
 static int	invalid_exec(char **stin, char **env, t_data *data)
 {
@@ -71,7 +71,7 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	}
 	else if (pid > 0)
 	{
-		signo = pid;
+		g_signo = pid;
 		wait(&rvalue);
 		if (data->lastpid != 0)
 			kill(data->lastpid, SIGTERM);
@@ -424,9 +424,9 @@ void kill_procs(int sig)
 {
 	if (sig == SIGINT)
 	{
-		if (signo > 0)
+		if (g_signo > 0)
 		{
-			kill(signo, 9);
+			kill(g_signo, 9);
 			ft_putchar('\n');
 		}
 	}

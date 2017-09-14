@@ -6,13 +6,13 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/22 18:35:32 by kbagot            #+#    #+#             */
-/*   Updated: 2017/05/23 19:43:26 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 15:48:55 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-static int		f_l(char const *str, int i, char *c)
+static int	f_l(char const *str, int i, char *c)
 {
 	int lettre;
 	int quote;
@@ -31,7 +31,7 @@ static int		f_l(char const *str, int i, char *c)
 	return (lettre);
 }
 
-static int		f_m(char const *str, char *c)
+static int	f_m(char const *str, char *c)
 {
 	int i;
 	int mot;
@@ -60,7 +60,7 @@ static int		f_m(char const *str, char *c)
 	return (mot);
 }
 
-static void stock(t_split *stk, char const *s, char *c, char **split)
+static void	stock(t_split *stk, char const *s, char *c, char **split)
 {
 	while (s[stk->i] && (stk->quote != 0 || ft_strchr(c, s[stk->i]) == NULL))
 	{
@@ -70,10 +70,9 @@ static void stock(t_split *stk, char const *s, char *c, char **split)
 			stk->quote = 0;
 		split[stk->j][stk->k++] = s[stk->i++];
 	}
-
 }
 
-static void init_splt(t_split *stk, char const *s, char *c)
+static void	init_splt(t_split *stk, char const *s, char *c)
 {
 	stk->s = s;
 	stk->c = c;
@@ -82,7 +81,7 @@ static void init_splt(t_split *stk, char const *s, char *c)
 	stk->quote = 0;
 }
 
-char			**strquotesplit(char const *s, char *c)
+char		**strquotesplit(char const *s, char *c)
 {
 	t_split	*stk;
 	char	**split;
@@ -99,7 +98,8 @@ char			**strquotesplit(char const *s, char *c)
 		{
 			stk->k = 0;
 			stk->quote = 0;
-			if ((split[stk->j] = malloc(sizeof(char) * (f_l(s, stk->i, c) + 1))) == NULL)
+			if ((split[stk->j] = malloc(sizeof(char) *
+							(f_l(s, stk->i, c) + 1))) == NULL)
 				return (NULL);
 			stock(stk, s, c, split);
 			split[stk->j++][stk->k++] = '\0';
@@ -108,6 +108,7 @@ char			**strquotesplit(char const *s, char *c)
 	split[stk->j] = NULL;
 	return (split);
 }
+
 /*
    int main(int ac, char **av)
    {

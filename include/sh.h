@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/08/26 21:18:17 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 18:22:21 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 
 typedef struct		s_env
 {

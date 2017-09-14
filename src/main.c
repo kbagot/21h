@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/08/26 21:20:37 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 18:44:20 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-int signo = 0;
+int g_signo = 0;
 
 static void		ms_dat(t_env *new_env, char **env, int i, int j)
 {
@@ -211,8 +211,8 @@ static void nkill_procs(int sig)
 {
 	if (sig == SIGINT)
 	{
-		if (signo > 0)
-			kill(signo, 9);
+		if (g_signo > 0)
+			kill(g_signo, 9);
 	}
 }
 

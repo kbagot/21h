@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/06 16:46:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/14 15:49:02 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static char	*delete_one(char *stin, t_data *data)
 	char *old;
 
 	old = stin;
-	if (data->cursor== (int)ft_strlen(stin))
+	if (data->cursor == (int)ft_strlen(stin))
 		stin[data->cursor - 1] = '\0';
 	else
 	{
@@ -103,13 +103,11 @@ static char	*conform(char *stin)
 			make_conform(&stin, &i, 3, "<<- ");
 		else if (!ft_strncmp(&stin[i], "<<", 2))
 			make_conform(&stin, &i, 2, "<< ");
-		else if (!ft_strncmp(&stin[i], ">", 1) &&
-				ft_strncmp(&stin[i], ">&", 2))
+		else if (!ft_strncmp(&stin[i], ">", 1) && ft_strncmp(&stin[i], ">&", 2))
 			make_conform(&stin, &i, 1, "> ");
 		else if (!ft_strncmp(&stin[i], ">&", 2))
 			make_conform(&stin, &i, 2, ">& ");
-		else if (!ft_strncmp(&stin[i], "<", 1) &&
-				ft_strncmp(&stin[i], "<&", 2))
+		else if (!ft_strncmp(&stin[i], "<", 1) && ft_strncmp(&stin[i], "<&", 2))
 			make_conform(&stin, &i, 1, "< ");
 		else if (!ft_strncmp(&stin[i], "<&", 1))
 			make_conform(&stin, &i, 2, "<& ");
@@ -184,7 +182,28 @@ static int	l_edit_1(char *buff, char **stin, t_data *data)
 	return (0);
 }
 
-static int l_edit_2(char *buff, char **stin, t_data *data)
+static int	l_edit_2_enterkey(t_data *data, char **stin, char *buff)
+{
+	if (get_proc(0) == 1)
+	{
+		ft_strdel(stin);
+		get_proc(2);
+	}
+	if (buff[0] == 12)
+		tputs(tgetstr("cl", NULL), 1, print);
+	if (buff[0] == 10 && conform_quote(*stin) != 0)
+		ft_putstr("\n> ");
+	else
+	{
+		ft_putchar('\n');
+		end_line(data, *stin, buff);
+		*stin = conform(*stin);
+		return (1);
+	}
+	return (0);
+}
+
+static int	l_edit_2(char *buff, char **stin, t_data *data)
 {
 	if ((!stin || (stin && stin[0] == '\0')) && buff[0] == 4)//ctrl + d [make exit]
 	{
@@ -195,29 +214,15 @@ static int l_edit_2(char *buff, char **stin, t_data *data)
 	}
 	else if (buff[0] == 10 || buff[0] == 12) // send enter / ctrl+L clear
 	{
-		if (get_proc(0) == 1)
-		{
-			ft_strdel(stin);
-			get_proc(2);
-		}
-		if (buff[0] == 12)
-			tputs(tgetstr("cl", NULL), 1, print);
-		if (buff[0] == 10 && conform_quote(*stin) != 0)
-			ft_putstr("\n> ");
-		else
-		{
-			ft_putchar('\n');
-			end_line(data, *stin, buff);
-			*stin = conform(*stin);
+		if (l_edit_2_enterkey(data, stin, buff))
 			return (2);
-		}
 	}
 	else
 		return (1);
 	return (0);
 }
 
-static void l_edit_3(char *buff, char **stin, t_data *data)
+static void	l_edit_3(char *buff, char **stin, t_data *data)
 {
 	int m;
 
@@ -238,7 +243,7 @@ static void l_edit_3(char *buff, char **stin, t_data *data)
 		writer(data, stin, buff);
 }
 
-static void init_l_edit(t_edit *e, t_data *data)
+static void	init_l_edit(t_edit *e, t_data *data)
 {
 	e->ler = 0;
 	e->stin = NULL;
@@ -260,8 +265,8 @@ char		*line_edit(t_data *data)
 	while (42)  // need \n
 	{
 		act_pos(data);
-		if (e->stin)
-			data->line_count = ((int)ft_strlen(e->stin) + data->start_col - 1) / data->scr_col;
+		//if (e->stin)
+		//		data->line_count = ((int)ft_strlen(e->stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(e->buff, 6);
 		read(0, e->buff, 5);
 		//ft_printf("{%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4]);ft_printf("%s\n", e->buff);
