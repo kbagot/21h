@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/22 18:35:32 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 15:48:55 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 16:43:27 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ char		**strquotesplit(char const *s, char *c)
 		}
 	}
 	split[stk->j] = NULL;
+	free(stk);
 	return (split);
 }
 

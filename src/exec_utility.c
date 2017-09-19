@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 19:09:31 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 19:17:09 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,11 +176,11 @@ static void		separate_line(char **cstin, int *i, t_line *line)
 
 static t_line	*split_pipe(char **cstin)
 {
-	t_line *line;
+	t_line	*line;
+	t_line	*save;
 	int		i;
 	int		j;
 	int		k;
-	t_line *save;
 
 	save = NULL;
 	i = 0;
@@ -220,35 +220,34 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 		{
 			pipe(fd);
 			d->out = fd[1];
-			if ((pid = fork ()) == 0)
+			if ((pid = fork()) == 0)
 			{
 				if (d->in != 0)
 				{
-					dup2 (d->in, 0);
-					close (d->in);
+					dup2(d->in, 0);
+					close(d->in);
 				}
 				if (d->out != 1)
 				{
-					dup2 (d->out, 1);
-					close (d->out);
+					dup2(d->out, 1);
+					close(d->out);
 				}
 				return (line);
 			}
 			d->lastpid = pid;
-			close (d->out);
+			close(d->out);
 			d->in = fd[0];
 			old = line;
 			line = line->next;
 			ft_tabdel(&old->proc);
 			ft_tabdel(&old->redirect);
-			free(old);
+			ft_memdel((void**)&old);
 		}
 		if (d->in != 0)
 			dup2(d->in, 0);
 	}
 	return (line);
 }
-
 
 static void	redir_output(char **cmd, t_data *d, int i)
 {//  >
@@ -264,7 +263,7 @@ static void	redir_output(char **cmd, t_data *d, int i)
 	else
 		ft_putstr_fd("21sh: permission denied\n", 2);
 	if (!(d->out >= 0 && d->out <= 2))
-		close (d->out);
+		close(d->out);
 }
 
 static void	redir_input(char **cmd, t_data *d, int i)
@@ -280,7 +279,7 @@ static void	redir_input(char **cmd, t_data *d, int i)
 	else
 		ft_putstr_fd("21sh: permission denied\n", 2);
 	if (!(d->in >= 0 && d->in <= 2))
-		close (d->in);
+		close(d->in);
 }
 
 static void	append_redir_output(char **cmd, t_data *d, int i)
@@ -297,7 +296,7 @@ static void	append_redir_output(char **cmd, t_data *d, int i)
 	else
 		ft_putstr_fd("21sh: permission denied\n", 2);
 	if (!(d->in >= 0 && d->in <= 2))
-		close (d->out);
+		close(d->out);
 }
 
 static int	dup_output(char **cmd, int i)
@@ -369,7 +368,7 @@ static int	dup_input(char **cmd, int i)
 		if (t != -1)
 		{
 			//		printf("%ddelt \n", t);
-			close (t);
+			close(t);
 		}
 		dup2(w, n);
 	}
@@ -378,9 +377,9 @@ static int	dup_input(char **cmd, int i)
 
 static int exec_redir(char **rdr, t_data *d)
 {
-	int i;
-	int j;
-	char **cmd;
+	char	**cmd;
+	int		i;
+	int		j;
 
 	j = 0;
 	i = 0;
@@ -495,9 +494,6 @@ static void	enter_utility(t_data *data, t_env **s_env, t_line *line)
 	if (line->next)
 		_exit(data->rvalue);
 	destroy_env(&tmp_env);
-	ft_tabdel(&line->proc);
-	ft_tabdel(&line->redirect);
-	free(line);
 }
 
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
@@ -510,10 +506,18 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 	if (!enter_builtin(data, s_env, stin, line))
 		enter_utility(data, s_env, line);
 	else
+	{
+		ft_tabdel(&line->proc);
+		ft_tabdel(&line->redirect);
+		ft_memdel((void**)&line);
 		return ;
+	}
 	int status;
 	int pid;
 	while ((pid = wait(&status)) > 0)
 		status = 0;
 	reset_fd(data);
+	ft_tabdel(&line->proc);
+	ft_tabdel(&line->redirect);
+	ft_memdel((void**)&line);
 }

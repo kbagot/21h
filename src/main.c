@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 18:44:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 20:35:32 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,17 +85,19 @@ static int	parse_token(char **stin)
 	i = 0;
 	while (stin[i])
 	{
-if ((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>')&& (c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>'))
+		if ((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
+				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>'))
 		{
+			ft_putstr_fd("21sh: syntax error near unexpected token", 2);
 			if (!stin[i + 1])
-				ft_putstr_fd("21sh: syntax error near unexpected token `newline'\n", 2);
+				ft_putstr_fd(" `newline'\n", 2);
 			else
-				ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
-				return (1);
+				ft_putstr_fd(" `&'\n", 2);
+			return (1);
 		}
 		else if (!ft_strcmp(stin[i], "&"))
 		{
-			ft_putstr_fd("321sh: syntax error near unexpected token `&'\n", 2);
+			ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
 			return (1);
 		}
 		i++;
@@ -113,7 +115,7 @@ static int	parse_error(char **stin)
 	tmp = NULL;
 	while (stin && stin[i])
 	{
-		tmp = strmsplit(stin[i], " \t\n");
+		tmp = strmsplit(stin[i], " \t\n");// obselete 
 		if (!tmp[0])
 		{
 			ft_tabdel(&tmp);
@@ -121,8 +123,10 @@ static int	parse_error(char **stin)
 		}
 		j = 0;
 		if (parse_token(tmp))
-			{ft_tabdel(&tmp);
-			return (0);}
+		{
+			ft_tabdel(&tmp);
+			return (0);
+		}
 		while (tmp[j])
 			j++;
 		if (strcmp(tmp[0], "|") == 0 || (j > 0 && strcmp(tmp[j - 1], "|") == 0))
@@ -140,14 +144,14 @@ static int	parse_error(char **stin)
 static void	heredoc(t_data *d, char **s, int j, int i)
 {
 	char *line;
-//	int up;
+	//	int up;
 	int fd[2];
 
 	pipe(fd);
-//	if (j != 0)
-//		up = ft_atoi(*s);
-//	else
-//		up = 0;
+	//	if (j != 0)
+	//		up = ft_atoi(*s);
+	//	else
+	//		up = 0;
 	ft_putstr("> ");
 	//	printf("%s\n", cmd[i]);
 	while (42)
@@ -163,7 +167,7 @@ static void	heredoc(t_data *d, char **s, int j, int i)
 	close (fd[1]);
 	s[i] = ft_strjoin(ft_strsub(s[i], 0, j), "&");
 	s[i + 1] = ft_itoa(fd[0]);
-//	printf("%s\n", s[i]);
+	//	printf("%s\n", s[i]);
 	//dup2(fd[0], up);
 	//close(fd[0]);
 }
@@ -185,13 +189,13 @@ static void	creat_heredoc(t_data *d, char **s)
 			while (s[i][j])
 			{
 				if (!ft_strncmp(&s[i][j], "<<", 2))
-								heredoc(d, s, j + 1, i);
-//	printf("%s\n", s[i]);}
-					j++;
-			}
-			i++;
+					heredoc(d, s, j + 1, i);
+				//	printf("%s\n", s[i]);}
+				j++;
 		}
+		i++;
 	}
+}
 }
 
 static	void prompt(int sig)
@@ -244,12 +248,12 @@ void		show_prompt(t_env *s_env, t_data *data)
 			{
 				cstin = splitforquote(septin[i], " \t\n");
 				creat_heredoc(data, cstin);
-			//	int lol;
+				//	int lol;
 				//lol= 0;
-			//	while (cstin[lol])
-			//	{
-			//	ft_printf("[%s]\n", cstin[lol]);
-			//		lol++;}
+				//	while (cstin[lol])
+				//	{
+				//	ft_printf("[%s]\n", cstin[lol]);
+				//		lol++;}
 				//cstin = strquotesplit(septin[i], " \t\n");
 				//int lol;
 				//lol=0;

@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/19 14:22:38 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 14:26:19 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 20:00:27 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,14 +142,15 @@ char		**splitforquote(char const *s, char *c)
 		if (s[stk->i])
 		{
 			if ((split[stk->j] = malloc(sizeof(char) *
-							(f_l(s, stk->i, c) + 1))) == NULL)
+							(f_l(s, stk->i, c) + 2))) == NULL)
 				return (NULL);
 			if (stock_q(stk, split, s))
 				stock_no_q(split, stk);
-			split[stk->j++][stk->k++] = '\0';
+			split[stk->j++][stk->k] = '\0';
 		}
 	}
 	split[stk->j] = NULL;
+	free(stk);
 	return (split);
 }
 

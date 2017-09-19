@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strsplit.c                                      :+:      :+:    :+:   */
+/*   strmsplit.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2016/11/11 18:45:13 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/11 11:48:19 by kbagot           ###   ########.fr       */
+/*   Created: 2017/09/19 20:05:54 by kbagot            #+#    #+#             */
+/*   Updated: 2017/09/19 20:35:34 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,15 @@ static int		f_m(char const *str, char *c)
 		i++;
 	while (str[i])
 	{
-		while (str[i] && ft_strchr(c, str[i]) == NULL)
+		while (str[i] && ft_strchr(c, str[i]))
 			i++;
-		mot++;
-		i++;
+		if (str[i] && ft_strchr(c, str[i]) == NULL)
+		{
+			while (str[i] && ft_strchr(c, str[i]) == NULL)
+				i++;
+			mot++;
+		}
 	}
-	if (ft_strchr(c, str[ft_strlen(str)]))
-		mot++;
 	return (mot);
 }
 

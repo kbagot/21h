@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/14 15:49:02 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 19:38:19 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,14 +55,6 @@ static void	add_history(char *cmd, t_data *data)
 		data->hist->next->next = NULL;
 		data->hist = data->hist->next;
 	}
-}
-
-static void	end_line(t_data *data, char *stin, char *buff)
-{
-	tputs(tgetstr("ei", NULL), 1, print);
-	add_history(stin, data);
-	ft_strdel(&buff);
-	reset_term(data);
 }
 
 static void	make_conform(char **stin, int *i, int c, char *nst)
@@ -182,7 +174,7 @@ static int	l_edit_1(char *buff, char **stin, t_data *data)
 	return (0);
 }
 
-static int	l_edit_2_enterkey(t_data *data, char **stin, char *buff)
+static int	l_edit_2_enterkey(char **stin, char *buff)
 {
 	if (get_proc(0) == 1)
 	{
@@ -196,25 +188,25 @@ static int	l_edit_2_enterkey(t_data *data, char **stin, char *buff)
 	else
 	{
 		ft_putchar('\n');
-		end_line(data, *stin, buff);
+		//end_line(data, *stin, buff);
 		*stin = conform(*stin);
 		return (1);
 	}
 	return (0);
 }
 
-static int	l_edit_2(char *buff, char **stin, t_data *data)
+static int	l_edit_2(char *buff, char **stin)
 {
 	if ((!stin || (stin && stin[0] == '\0')) && buff[0] == 4)//ctrl + d [make exit]
 	{
 		ft_strdel(stin);
 		*stin = ft_strdup("exit");
-		end_line(data, *stin, buff);
+		//end_line(data, *stin, buff);
 		return (2);
 	}
 	else if (buff[0] == 10 || buff[0] == 12) // send enter / ctrl+L clear
 	{
-		if (l_edit_2_enterkey(data, stin, buff))
+		if (l_edit_2_enterkey(stin, buff))
 			return (2);
 	}
 	else
@@ -256,6 +248,22 @@ static void	init_l_edit(t_edit *e, t_data *data)
 	data->start_col = data->col;
 }
 
+static char	*end_line(t_data *data, t_edit *e)
+{
+	char *ret;
+
+	//tputs(tgetstr("ei", NULL), 1, print);
+	ret = NULL;
+	if (e->stin)
+		ret = ft_strdup(e->stin);
+	add_history(e->stin, data);
+	ft_strdel(&e->buff);
+	ft_strdel(&e->stin);
+	free(e);
+	reset_term(data);
+	return(ret);
+}
+
 char		*line_edit(t_data *data)
 {
 	t_edit *e;
@@ -272,14 +280,15 @@ char		*line_edit(t_data *data)
 		//ft_printf("{%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4]);ft_printf("%s\n", e->buff);
 		if (l_edit_1(e->buff, &e->stin, data))
 		{
-			if ((e->ler = l_edit_2(e->buff, &e->stin, data)) || e->ler == 2)
+			if ((e->ler = l_edit_2(e->buff, &e->stin)) || e->ler == 2)
 			{
 				if (e->ler == 2)
-					return (e->stin);
+					return (end_line(data, e));
 				l_edit_3(e->buff, &e->stin, data);
 			}
 		}
 	}
-	end_line(data, e->stin, e->buff);// utility ??
-	return (e->stin);
+	ft_putstr("l1");
+	//end_line(data, e->stin, e->buff);// utility ??
+	return (end_line(data, e));
 }
