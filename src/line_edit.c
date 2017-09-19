@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 19:38:19 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/19 20:58:20 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,6 @@ char		*line_edit(t_data *data)
 			}
 		}
 	}
-	ft_putstr("l1");
 	//end_line(data, e->stin, e->buff);// utility ??
 	return (end_line(data, e));
 }
