@@ -6,24 +6,40 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 18:27:12 by kbagot            #+#    #+#             */
-/*   Updated: 2017/08/26 18:46:32 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 17:53:34 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
+int			move_cursor(t_data *data, char *stin, char *buff)
+{
+	if (buff[2] == data->a->kr_s[2] && stin &&
+			data->cursor < (int)ft_strlen(stin))
+	{
+		move_right(data);
+		return (0);
+	}
+	else if (buff[2] == data->a->kl_s[2] && data->cursor > 0)
+	{
+		move_left(data);
+		return (0);
+	}
+	return (1);
+}
+
 static void	print_hist(char **stin, t_data *data)
 {
 	ft_printf("%s", *stin);
-	tputs(tgetstr("sc", NULL), 1, print);
+	tputs(data->a->sc_s, 1, print);
 	cleaner(data);
-	tputs(tgetstr("rc", NULL), 1, print);
+	tputs(data->a->rc_s, 1, print);
 	data->cursor = ft_strlen(*stin);
 }
 
 static int	history_browsing(t_data *data, char **stin, char *buff)
 {
-	if (buff[2] == tgetstr("ku", NULL)[2] && data->hist)
+	if (buff[2] == data->a->ku_s[2] && data->hist)
 	{
 		go_home(data);
 		ft_strdel(stin);
@@ -33,7 +49,7 @@ static int	history_browsing(t_data *data, char **stin, char *buff)
 			data->hist = data->hist->before;
 		return (0);
 	}
-	else if (buff[2] == tgetstr("kd", NULL)[2] && data->hist)
+	else if (buff[2] == data->a->kd_s[2] && data->hist)
 	{
 		if (data->hist->next)
 		{
@@ -43,22 +59,6 @@ static int	history_browsing(t_data *data, char **stin, char *buff)
 			print_hist(stin, data);
 			data->hist = data->hist->next;
 		}
-		return (0);
-	}
-	return (1);
-}
-
-static int	move_cursor(t_data *data, char *stin, char *buff)
-{
-	if (buff[2] == tgetstr("kr", NULL)[2] && stin &&
-			data->cursor < (int)ft_strlen(stin))
-	{
-		move_right(data);
-		return (0);
-	}
-	else if (buff[2] == tgetstr("kl", NULL)[2] && data->cursor > 0)
-	{
-		move_left(data);
 		return (0);
 	}
 	return (1);

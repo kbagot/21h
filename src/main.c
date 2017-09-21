@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 20:35:32 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 20:38:29 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,9 @@ static int	parse_token(char **stin)
 	i = 0;
 	while (stin[i])
 	{
-		if ((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
-				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>'))
+		if (((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
+				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>')) ||
+				(!ft_strcmp(stin[i], "<<") && !stin[i + 1]))
 		{
 			ft_putstr_fd("21sh: syntax error near unexpected token", 2);
 			if (!stin[i + 1])
@@ -147,7 +148,7 @@ static void	heredoc(t_data *d, char **s, int j, int i)
 	//	int up;
 	int fd[2];
 
-	pipe(fd);
+	pipe(fd); // save fd ,  he use reserved fd
 	//	if (j != 0)
 	//		up = ft_atoi(*s);
 	//	else
@@ -281,6 +282,7 @@ int				main(int ac, char **av, char **env)
 	t_data	*data;
 
 	data = ft_memalloc(sizeof(t_data));
+	data->a = ft_memalloc(sizeof(t_ansi));
 	data->lastpid = 0;
 	data->rvalue = 0;
 	data->hist = NULL;

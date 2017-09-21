@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/06 18:20:37 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/27 14:39:17 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 20:07:04 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,24 @@ static void	update_env(t_env *env, char **cstin)
 		up_pwd(pwd, oldpwd, cstin);
 }
 
+static void	tilde_it(char **cstin, t_env *env)
+{
+	int		i;
+	char	*tmp;
+	t_env	*search;
+
+	i = -1;
+	while (cstin[++i])
+	{
+		if (cstin[i][0] == '~' && (search = search_env(env, "HOME")))
+		{
+			tmp = ft_strjoin(search->value, &cstin[i][1]);
+			ft_strdel(&cstin[i]);
+			cstin[i] = tmp;
+		}
+	}
+}
+
 int			exec_cd(char **cstin, t_env *env)
 {
 	t_env	*search;
@@ -56,12 +74,13 @@ int			exec_cd(char **cstin, t_env *env)
 	i = 0;
 	while (cstin[i])
 		i++;
+	tilde_it(cstin, env);
 	if (i >= 4)
 	{
 		ft_putstr_fd("cd: Too many arguments\n", 2);
 		return (1);
 	}
-	else if (i == 2 && ft_strcmp(cstin[1], "-") == 0 &&
+	else if (i == 2 && !ft_strcmp(cstin[1], "-") &&
 			(search = search_env(env, "OLDPWD")))
 		chdir(search->value);
 	else if ((cstin[1] && ft_strcmp(cstin[1], "-") == 0) ||

@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/11/11 18:45:13 by kbagot            #+#    #+#             */
-/*   Updated: 2016/11/15 20:33:47 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 14:20:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,16 @@ static int		f_m(char const *str, char c)
 
 	mot = 0;
 	i = 0;
-	while (str[i] && str[i] == c)
-		i++;
 	while (str[i])
 	{
-		while (str[i] && str[i] != c)
+		while (str[i] && str[i] == c)
 			i++;
-		mot++;
-		i++;
+		if (str[i] && str[i] != c)
+		{
+			while (str[i] && str[i] != c)
+				i++;
+			mot++;
+		}
 	}
 	if (str[ft_strlen(str)] == c)
 		mot++;

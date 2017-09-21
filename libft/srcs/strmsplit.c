@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/19 20:05:54 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 20:35:34 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 13:58:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ static int		f_m(char const *str, char *c)
 
 	mot = 0;
 	i = 0;
-	while (str[i] && ft_strchr(c, str[i]))
-		i++;
 	while (str[i])
 	{
 		while (str[i] && ft_strchr(c, str[i]))

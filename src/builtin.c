@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/08 18:42:00 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 15:37:31 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ static int	exec_history(t_data *data)
 	return (1);
 }
 
-static int	exec_help()
+static int	exec_help(void)
 {
 	ft_putstr("21sh\nKEYBINDING\nLeave current shell [CTRL+D]\n");
 	ft_putstr("Clear shell [CTRL+L]\n\nEnter in cpy/cut mode [CTRL+K]\n");

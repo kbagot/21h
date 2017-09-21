@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 19:43:43 by kbagot            #+#    #+#             */
-/*   Updated: 2017/06/06 19:46:45 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 16:48:18 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ void	go_home(t_data *data)
 	{
 		act_pos(data);
 		if (data->col == 1)
-			tputs(tgoto(tgetstr("cm", NULL),
+			tputs(tgoto(data->a->cm_s,
 						data->scr_col - 1, data->row - 2), 1, print);
 		else
-			tputs(tgetstr("le", NULL), 1, print);
+			tputs(data->a->le_s, 1, print);
 		data->cursor--;
 	}
 }
@@ -32,9 +32,9 @@ void		go_end(t_data *data, char *stin)
 	{
 		act_pos(data);
 		if (data->col == data->scr_col)
-			tputs(tgetstr("do", NULL), 1, print);
+			tputs(data->a->do_s, 1, print);
 		else
-			tputs(tgetstr("nd", NULL), 1, print);
+			tputs(data->a->nd_s, 1, print);
 		data->cursor++;
 	}
 }
@@ -43,10 +43,10 @@ void	move_left(t_data *data)
 {
 	act_pos(data);
 	if (data->col == 1)
-		tputs(tgoto(tgetstr("cm", NULL),
+		tputs(tgoto(data->a->cm_s,
 					data->scr_col - 1, data->row - 2), 1, print);
 	else
-		tputs(tgetstr("le", NULL), 1, print);
+		tputs(data->a->le_s, 1, print);
 	data->cursor--;
 }
 
@@ -54,8 +54,8 @@ void	move_right(t_data *data)
 {
 	act_pos(data);
 	if (data->col == data->scr_col)
-		tputs(tgetstr("do", NULL), 1, print);
+		tputs(data->a->do_s, 1, print);
 	else
-		tputs(tgetstr("nd", NULL), 1, print);
+		tputs(data->a->nd_s, 1, print);
 	data->cursor++;
 }

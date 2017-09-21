@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/26 15:41:47 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 19:27:26 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 16:45:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,19 +34,19 @@ static void	multi_line(char **stin, t_data *data, int len)
 {
 	int end;
 
-	tputs(tgetstr("sc", NULL), 1, print);
+	tputs(data->a->sc_s, 1, print);
 	end = data->row + (((data->col +
 (((int)ft_strlen(&stin[0][data->cursor]) - 2))) / data->scr_col));
 	ft_putstr(&stin[0][data->cursor]);
 	act_pos(data);
 	if (end >= data->scr_row + 1)
 	{
-		tputs(tgetstr("rc", NULL), 1, print);
+		tputs(data->a->rc_s, 1, print);
 		act_pos(data);
-		tputs(tgetstr("up", NULL), 1, print);
+		tputs(data->a->up_s, 1, print);
 	}
 	else
-		tputs(tgetstr("rc", NULL), 1, print);
+		tputs(data->a->rc_s, 1, print);
 	data->cursor += len;
 	while (len > 0)
 	{

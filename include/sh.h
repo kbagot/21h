@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 17:59:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/21 20:45:40 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,28 @@ typedef struct		s_data
 	int				stderr_cpy;
 	int				lastpid;
 	struct termios	stored_settings;
+	struct s_ansi	*a;
 }					t_data;
+
+typedef struct		s_ansi
+{
+	char			*cm_s;
+	char			*dl_s;
+	char			*do_s;
+	char			*le_s;
+	char			*nd_s;
+	char			*sc_s;
+	char			*rc_s;
+	char			*ku_s;
+	char			*kd_s;
+	char			*kr_s;
+	char			*kl_s;
+	char			*cl_s;
+	char			*up_s;
+	char			*dc_s;
+	char			*se_s;
+	char			*so_s;
+}					t_ansi;
 
 typedef struct		s_line // line piped
 {
@@ -129,5 +150,6 @@ void				reset_line(t_data *data, char *stin);
 void				cleaner(t_data *data);
 void				kill_procs(int sig);
 int					get_proc(int sign);
+int					move_cursor(t_data *data, char *stin, char *buff);
 
 #endif
