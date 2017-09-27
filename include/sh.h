@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 20:45:40 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/27 14:47:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,5 +151,6 @@ void				cleaner(t_data *data);
 void				kill_procs(int sig);
 int					get_proc(int sign);
 int					move_cursor(t_data *data, char *stin, char *buff);
+void				save_fd(t_data *data);
 
 #endif

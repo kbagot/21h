@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 15:28:11 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/27 17:46:45 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	invalid_exec(char **stin, char **env, t_data *data)
 		ft_tabdel(&env);
 		if (stin[0])
 		{
-			ft_putstr_fd("minishell: command not found: ", 2);
+			ft_putstr_fd("21sh: command not found: ", 2);
 			ft_putstr_fd(stin[0], 2);
 			ft_putchar_fd('\n', 2);
 			data->rvalue = 1;
@@ -452,7 +452,7 @@ static void reset_fd(t_data *data)
 	//		close (data->err);
 }
 
-static void	save_fd(t_data *data)
+void	save_fd(t_data *data)
 {
 	data->stdin_cpy = 10;
 	data->stdout_cpy = 11;
@@ -500,7 +500,6 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 {
 	t_line	*line;
 
-	save_fd(data);
 	line = split_pipe(cstin);
 	line = fork_pipes(line, data);
 	if (!enter_builtin(data, s_env, stin, line))

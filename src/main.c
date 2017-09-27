@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 20:38:29 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/27 17:46:27 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,8 +117,9 @@ static int	parse_error(char **stin)
 	while (stin && stin[i])
 	{
 		tmp = strmsplit(stin[i], " \t\n");// obselete 
-		if (!tmp[0])
+		if (!tmp[0] && stin[i + 1])
 		{
+			ft_putstr_fd("21sh: syntax error near unexpected token `;'\n", 2);
 			ft_tabdel(&tmp);
 			return (0);
 		}
@@ -130,7 +131,7 @@ static int	parse_error(char **stin)
 		}
 		while (tmp[j])
 			j++;
-		if (strcmp(tmp[0], "|") == 0 || (j > 0 && strcmp(tmp[j - 1], "|") == 0))
+		if (tmp[0] && (strcmp(tmp[0], "|") == 0 || (j > 0 && strcmp(tmp[j - 1], "|") == 0)))
 		{
 			ft_tabdel(&tmp);
 			ft_putstr_fd("21sh: error near unexpected token `|'\n", 2);
@@ -248,6 +249,8 @@ void		show_prompt(t_env *s_env, t_data *data)
 			while (stin && septin[i])
 			{
 				cstin = splitforquote(septin[i], " \t\n");
+				if (cstin && cstin[0]){
+				save_fd(data);
 				creat_heredoc(data, cstin);
 				//	int lol;
 				//lol= 0;
@@ -264,6 +267,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 				set(cstin, s_env);
 				parse_entry(&s_env, cstin, septin[i], data);
 				ft_tabdel(&cstin);
+				}
 				i++;
 			}
 		}

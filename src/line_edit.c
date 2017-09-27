@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 20:53:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/27 17:47:47 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,10 @@ static char	*conform(char *stin)
 			make_conform(&stin, &i, 2, ">& ");
 		else if (!ft_strncmp(&stin[i], "<", 1) && ft_strncmp(&stin[i], "<&", 2))
 			make_conform(&stin, &i, 1, "< ");
-		else if (!ft_strncmp(&stin[i], "<&", 1))
-			make_conform(&stin, &i, 2, "<& ");
+		else if (!ft_strncmp(&stin[i], "<&", 2))
+			make_conform(&stin, &i, 3, "<& ");
+		else if (!ft_strncmp(&stin[i], ";", 1))
+			make_conform(&stin, &i, 1, "; ");
 		i++;
 	}
 	return (stin);
