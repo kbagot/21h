@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/27 17:46:27 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/27 20:31:26 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,32 +77,52 @@ static void		set(char **str, t_env *env)
 	}
 }
 
+static int	parse_token_two(char **stin, int i)
+{
+	char	*c;
+
+	if (((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
+				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>')) ||
+			(!ft_strcmp(stin[i], "<<") && !stin[i + 1]))
+	{
+		ft_putstr_fd("21sh: syntax error near unexpected token", 2);
+		if (!stin[i + 1])
+			ft_putstr_fd(" `newline'\n", 2);
+		else
+			ft_putstr_fd(" `&'\n", 2);
+		return (1);
+	}
+	else if ((!ft_strcmp(stin[i], "|") && !ft_strcmp(stin[i + 1], "|")) ||
+			(!ft_strcmp(stin[i], "&")))
+	{
+		ft_putstr_fd("21sh: syntax error near unexpected token", 2);
+		if (stin[i][0] == '|')
+			ft_putstr_fd(" `|'\n", 2);
+		else if (stin[i][0] == '&')
+			ft_putstr_fd(" `&'\n", 2);
+		return (1);
+	}
+	return (0);
+}
+
 static int	parse_token(char **stin)
 {
-	int i;
-	char *c;
+	int		i;
+	int		j;
 
 	i = 0;
-	while (stin[i])
+	j = 0;
+	while (stin[j])
+		j++;
+	if (stin[0] && (strcmp(stin[0], "|") == 0 ||
+				(j > 0 && strcmp(stin[j - 1], "|") == 0)))
 	{
-		if (((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
-				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>')) ||
-				(!ft_strcmp(stin[i], "<<") && !stin[i + 1]))
-		{
-			ft_putstr_fd("21sh: syntax error near unexpected token", 2);
-			if (!stin[i + 1])
-				ft_putstr_fd(" `newline'\n", 2);
-			else
-				ft_putstr_fd(" `&'\n", 2);
-			return (1);
-		}
-		else if (!ft_strcmp(stin[i], "&"))
-		{
-			ft_putstr_fd("21sh: syntax error near unexpected token `&'\n", 2);
-			return (1);
-		}
-		i++;
+		ft_putstr_fd("21sh: error near unexpected token `|'\n", 2);
+		return (1);
 	}
+	while (stin[i])
+		if (parse_token_two(stin, i++))
+			return (1);
 	return (0);
 }
 
@@ -116,7 +136,7 @@ static int	parse_error(char **stin)
 	tmp = NULL;
 	while (stin && stin[i])
 	{
-		tmp = strmsplit(stin[i], " \t\n");// obselete 
+		tmp = strmsplit(stin[i], " \t\n");// obselete
 		if (!tmp[0] && stin[i + 1])
 		{
 			ft_putstr_fd("21sh: syntax error near unexpected token `;'\n", 2);
@@ -127,14 +147,6 @@ static int	parse_error(char **stin)
 		if (parse_token(tmp))
 		{
 			ft_tabdel(&tmp);
-			return (0);
-		}
-		while (tmp[j])
-			j++;
-		if (tmp[0] && (strcmp(tmp[0], "|") == 0 || (j > 0 && strcmp(tmp[j - 1], "|") == 0)))
-		{
-			ft_tabdel(&tmp);
-			ft_putstr_fd("21sh: error near unexpected token `|'\n", 2);
 			return (0);
 		}
 		ft_tabdel(&tmp);
@@ -166,7 +178,7 @@ static void	heredoc(t_data *d, char **s, int j, int i)
 		ft_strdel(&line);
 		ft_putstr("> ");
 	}
-	close (fd[1]);
+	close(fd[1]);
 	s[i] = ft_strjoin(ft_strsub(s[i], 0, j), "&");
 	s[i + 1] = ft_itoa(fd[0]);
 	//	printf("%s\n", s[i]);
@@ -222,60 +234,69 @@ static void nkill_procs(int sig)
 	}
 }
 
+static void printf_prompt(t_env *search, t_env *s_env)
+{
+	if ((search = search_env(s_env, "PWD")) &&
+			ft_strchr(search->value, '/'))
+		ft_printf("\033[0;36m[%s]> \033[0m",
+				&(ft_strrchr(search->value, '/')[1]));
+	else
+		ft_printf("\033[0;36m[]> \033[0m");
+}
+
+static void	one_by_one(char **septin, t_data *data, t_env *s_env)
+{
+	char	**cstin;
+	int		i;
+
+	i = 0;
+	while (septin[i])
+	{
+		cstin = splitforquote(septin[i], " \t\n");
+		if (cstin && cstin[0])
+		{
+			save_fd(data);
+			creat_heredoc(data, cstin);
+			set(cstin, s_env);
+			parse_entry(&s_env, cstin, septin[i], data);
+		}
+		ft_tabdel(&cstin);
+		i++;
+	}
+}
+
 void		show_prompt(t_env *s_env, t_data *data)
 {
 	char	*stin;
-	char	**cstin;
 	t_env	*search;
 	char	**septin;
 	int		i;
 
+	search = NULL;
 	stin = NULL;
 	while (42)
 	{
 		i = 0;
-		if ((search = search_env(s_env, "PWD")) &&
-				ft_strchr(search->value, '/'))
-			ft_printf("\033[0;36m[%s]> \033[0m",
-					&(ft_strrchr(search->value, '/')[1]));
-		else
-			ft_printf("\033[0;36m[]> \033[0m");
+		printf_prompt(search, s_env);
 		signal(SIGINT, prompt);
 		stin = line_edit(data);
 		signal(SIGINT, kill_procs);
 		septin = strquotesplit(stin, ";");//use stin fot history
-		if (parse_error(septin)) // token
-		{
-			while (stin && septin[i])
-			{
-				cstin = splitforquote(septin[i], " \t\n");
-				if (cstin && cstin[0]){
-				save_fd(data);
-				creat_heredoc(data, cstin);
-				//	int lol;
-				//lol= 0;
-				//	while (cstin[lol])
-				//	{
-				//	ft_printf("[%s]\n", cstin[lol]);
-				//		lol++;}
-				//cstin = strquotesplit(septin[i], " \t\n");
-				//int lol;
-				//lol=0;
-				//while (cstin[lol])
-				//{ft_printf("[%s]\n", cstin[lol]);
-				//lol++;}
-				set(cstin, s_env);
-				parse_entry(&s_env, cstin, septin[i], data);
-				ft_tabdel(&cstin);
-				}
-				i++;
-			}
-		}
+		if (parse_error(septin) && stin) // token
+			one_by_one(septin, data, s_env);
 		signal(SIGINT, nkill_procs);
 		kill(0, SIGINT);
 		ft_tabdel(&septin);
 		ft_strdel(&stin);
 	}
+}
+
+static void init_data(t_data *data)
+{
+	data->a = ft_memalloc(sizeof(t_ansi));
+	data->lastpid = 0;
+	data->rvalue = 0;
+	data->hist = NULL;
 }
 
 int				main(int ac, char **av, char **env)
@@ -286,14 +307,11 @@ int				main(int ac, char **av, char **env)
 	t_data	*data;
 
 	data = ft_memalloc(sizeof(t_data));
-	data->a = ft_memalloc(sizeof(t_ansi));
-	data->lastpid = 0;
-	data->rvalue = 0;
-	data->hist = NULL;
+	init_data(data);
+	s_env = NULL;
 	if (ac == 1 && av)
 	{
 		av = NULL;
-		s_env = NULL;
 		s_env = env_build(env, s_env);
 		if ((search = search_env(s_env, "SHLVL")))
 		{
