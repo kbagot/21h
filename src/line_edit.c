@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/27 17:50:09 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/28 17:08:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,6 +149,7 @@ void		act_pos(t_data *d)
 		ansi = ft_strjoin(tmp, buff);
 		ft_strdel(&tmp);
 	}
+	//ft_printf("[%s | %s]", &ansi[2], &ft_strchr(&ansi[2], ';')[1]);
 	d->row = ft_atoi(&ansi[2]);
 	d->col = ft_atoi(&ft_strchr(&ansi[2], ';')[1]);
 	ft_strdel(&buff);
