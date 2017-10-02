@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/27 17:50:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/09/28 20:12:44 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -473,6 +473,7 @@ static int enter_builtin(t_data *data, t_env **s_env, char *stin, t_line *line)
 		if (line->next)
 		{
 			_exit(data->rvalue);
+		waitpid(-1, NULL, WNOHANG);
 		}
 		else
 		{
@@ -499,6 +500,8 @@ static void	enter_utility(t_data *data, t_env **s_env, t_line *line)
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 {
 	t_line	*line;
+	int status;
+	int pid;
 
 	line = split_pipe(cstin);
 	line = fork_pipes(line, data);
@@ -506,13 +509,14 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 		enter_utility(data, s_env, line);
 	else
 	{
+	while ((pid = wait(&status)) > 0)
+		status = 0;
+	reset_fd(data);
 		ft_tabdel(&line->proc);
 		ft_tabdel(&line->redirect);
 		ft_memdel((void**)&line);
 		return ;
 	}
-	int status;
-	int pid;
 	while ((pid = wait(&status)) > 0)
 		status = 0;
 	reset_fd(data);
