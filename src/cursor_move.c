@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/06 19:43:43 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 16:48:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/02 20:55:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	go_home(t_data *data)
 	}
 }
 
-void		go_end(t_data *data, char *stin)
+void	go_end(t_data *data, char *stin)
 {
 	while (data->cursor < (int)ft_strlen(stin))
 	{
@@ -59,3 +59,20 @@ void	move_right(t_data *data)
 		tputs(data->a->nd_s, 1, print);
 	data->cursor++;
 }
+
+int		move_cursor(t_data *data, char *stin, char *buff)
+{
+	if (buff[2] == data->a->kr_s[2] && stin &&
+			data->cursor < (int)ft_strlen(stin))
+	{
+		move_right(data);
+		return (0);
+	}
+	else if (buff[2] == data->a->kl_s[2] && data->cursor > 0)
+	{
+		move_left(data);
+		return (0);
+	}
+	return (1);
+}
+

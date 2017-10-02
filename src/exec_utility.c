@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/28 20:12:44 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/02 21:10:41 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,130 +83,6 @@ static void	exec_utility(char **env, char **stin, t_data *data)
 	ft_tabdel(&env);
 }
 
-static void		find_pipe(char **cstin, int *j, int *k)
-{
-	int i;
-
-	i = 0;
-	while (cstin[i] && ft_strcmp(cstin[i], "|") != 0)
-	{
-		if (!ft_strchr("\"\'", cstin[i][0] && (ft_strchr(cstin[i], '>') ||
-						ft_strchr(cstin[i], '<'))))
-			*k += 1;
-		else
-			*j += 1;
-		i++;
-	}
-}
-
-static void		stock_redir_fd(t_line *line, char **cstin, int *k, char *c)
-{
-	char *tmp;
-	char *tmp2;
-
-	tmp = ft_strsub(cstin[0], 0, c - cstin[0]);
-	tmp2 = ft_strjoin(c, " ");
-	line->redirect[*k] = join(ft_strjoin(tmp, " "), tmp2, cstin[1]);
-	ft_strdel(&tmp);
-	ft_strdel(&tmp2);
-	*k += 1;
-}
-
-static void		stock_redir(char **cstin, t_line *line, int *j, int *k)
-{
-	char *c;
-
-	c = NULL;
-	if (!(c = ft_strchr(*cstin, '>')))
-		c = ft_strchr(*cstin, '<');
-	if (c == *cstin)
-	{
-		line->redirect[*k] = join(ft_strdup(*cstin), " ", cstin[1]);
-		*k += 1;
-	}
-	else
-	{
-		if (!ft_isnbr(ft_strsub(*cstin, 0, c - *cstin)))
-		{
-			line->proc[*j] = ft_strsub(*cstin, 0, c - *cstin);
-			line->redirect[*k] = join(ft_strdup(&cstin[0][c - *cstin]), " ",
-					cstin[1]);
-			*j += 1;
-			*k += 1;
-		}
-		else
-			stock_redir_fd(line, cstin, k, c);
-	}
-}
-
-static void		sep_line_stck(t_line *line, int *j, char **cstin, int *i)
-{
-	if (ft_strchr("\'\"", cstin[*i][0]))
-		line->proc[*j] = ft_strdup(&cstin[*i][1]);
-	else
-		line->proc[*j] = ft_strdup(cstin[*i]);
-	*j += 1;
-}
-
-static void		separate_line(char **cstin, int *i, t_line *line)
-{
-	int		j;
-	int		k;
-	char	*c;
-
-	k = 0;
-	j = 0;
-	while (cstin[*i] && (ft_strcmp(cstin[*i], "|") != 0))
-	{//add redirect cmd
-		if (!ft_strchr("\'\"", cstin[*i][0]) && ((c = ft_strchr(cstin[*i], '>'))
-					|| (c = ft_strchr(cstin[*i], '<'))))
-		{
-			stock_redir(&cstin[*i], line, &j, &k);
-			*i += 1;
-		}
-		else
-			sep_line_stck(line, &j, cstin, i);
-		if (!cstin[*i])
-			break ;
-		*i += 1;
-	}
-	line->redirect[k] = NULL;
-	line->proc[j] = NULL;
-}
-
-static t_line	*split_pipe(char **cstin)
-{
-	t_line	*line;
-	t_line	*save;
-	int		i;
-	int		j;
-	int		k;
-
-	save = NULL;
-	i = 0;
-	j = 0;
-	k = 0;
-	while (cstin[i])
-	{
-		if (save == NULL)
-		{
-			line = ft_memalloc(sizeof(t_line));
-			save = line;
-		}
-		find_pipe(&cstin[i], &j, &k);
-		line->proc = (char**)malloc(sizeof(char*) * (j + 1));
-		line->redirect = (char**)malloc(sizeof(char*) * (k + 1));
-		separate_line(cstin, &i, line);
-		line->next = NULL;
-		if (!cstin[i])
-			break ;
-		line->next = ft_memalloc(sizeof(t_line));
-		line = line->next;
-		i++;
-	}
-	return (save);
-}
-
 static t_line	*fork_pipes(t_line *line, t_data *d)
 {
 	t_line *old;
@@ -249,180 +125,6 @@ static t_line	*fork_pipes(t_line *line, t_data *d)
 	return (line);
 }
 
-static void	redir_output(char **cmd, t_data *d, int i)
-{//  >
-	int up;
-
-	if (i != 1)
-		up = ft_atoi(cmd[0]);
-	else
-		up = 1;
-	if ((d->out = open(cmd[i], O_CREAT | O_WRONLY | O_TRUNC,
-					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) != -1)
-		dup2(d->out, up);
-	else
-		ft_putstr_fd("21sh: permission denied\n", 2);
-	if (!(d->out >= 0 && d->out <= 2))
-		close(d->out);
-}
-
-static void	redir_input(char **cmd, t_data *d, int i)
-{// <
-	int up;
-
-	if (i != 1)
-		up = ft_atoi(cmd[0]);
-	else
-		up = 0;
-	if ((d->in = open(cmd[i], O_RDONLY)) != -1)
-		dup2(d->in, up);
-	else
-		ft_putstr_fd("21sh: permission denied\n", 2);
-	if (!(d->in >= 0 && d->in <= 2))
-		close(d->in);
-}
-
-static void	append_redir_output(char **cmd, t_data *d, int i)
-{// >>
-	int up;
-
-	if (i != 1)
-		up = ft_atoi(cmd[0]);
-	else
-		up = 1;
-	if ((d->out = open(cmd[i], O_CREAT | O_WRONLY | O_APPEND,
-					S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) != -1)
-		dup2(d->out, up);
-	else
-		ft_putstr_fd("21sh: permission denied\n", 2);
-	if (!(d->in >= 0 && d->in <= 2))
-		close(d->out);
-}
-
-static int	dup_output(char **cmd, int i)
-{
-	int n;
-	int w;
-
-	//printf("[%s][%s][%s] %d \n", cmd[0], cmd[1], cmd[2], i);
-	if (i != STDOUT_FILENO)
-		n = ft_atoi(cmd[0]);
-	else
-		n = STDOUT_FILENO;
-	if (!ft_strcmp(cmd[i], "-"))
-		close (n);
-	if (ft_isnbr(cmd[i]))
-	{
-		int t;
-		t = -1;
-		//ft_printf("%d\n", d->out);
-		w = ft_atoi(cmd[i]);
-		//		printf("%d \n", d->out);
-		if ((w >= 10 && w <= 12) || (t = dup(w)) == -1)
-		{
-			//		printf("%d \n", t);
-			//		printf("%d \n", w);
-			ft_putstr_fd("21sh: ", 2);
-			ft_putnbr_fd(w, 2);
-			ft_putstr_fd(": Bad file descriptor\n", 2);
-			return (1);
-		}
-		if (t != -1)
-		{
-			//		printf("%ddelt \n", t);
-			close (t);
-		}
-		dup2(w, n);
-	}
-	return (0);
-}
-
-static int	dup_input(char **cmd, int i)
-{ //mirror of upper fct 
-	int n;
-	int w;
-
-	//printf("[%s][%s][%s] %d \n", cmd[0], cmd[1], cmd[2], i);
-	if (i != STDIN_FILENO)
-		n = ft_atoi(cmd[0]);
-	else
-		n = STDIN_FILENO;
-	if (!ft_strcmp(cmd[i], "-"))
-		close (n);
-	if (ft_isnbr(cmd[i]))
-	{
-		int t;
-		t = -1;
-		//ft_printf("%d\n", d->out);
-		w = ft_atoi(cmd[i]);
-		//		printf("%d \n", d->out);
-		if ((w >= 10 && w <= 12) || (t = dup(w)) == -1)
-		{
-			//		printf("%d \n", t);
-			//		printf("%d \n", w);
-			ft_putstr_fd("21sh: ", 2);
-			ft_putnbr_fd(w, 2);
-			ft_putstr_fd(": Bad file descriptor\n", 2);
-			return (1);
-		}
-		if (t != -1)
-		{
-			//		printf("%ddelt \n", t);
-			close(t);
-		}
-		dup2(w, n);
-	}
-	return (0);
-}
-
-static int exec_redir(char **rdr, t_data *d)
-{
-	char	**cmd;
-	int		i;
-	int		j;
-
-	j = 0;
-	i = 0;
-	cmd = NULL;
-	while (rdr[j])
-	{
-		cmd = ft_strsplit(rdr[j], ' ');
-		while (cmd[i])
-			i++;
-		i--;
-		if (i >= 0 && !ft_strcmp(cmd[i - 1], ">"))
-			redir_output(cmd, d, i);
-		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<"))
-			redir_input(cmd, d, i);
-		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">>"))
-			append_redir_output(cmd, d, i);
-		else if (i >= 0 && !ft_strcmp(cmd[i - 1], ">&"))
-		{
-			if (dup_output(cmd, i))
-				return (1);
-		}
-		else if (i >= 0 && !ft_strcmp(cmd[i - 1], "<&"))
-		{
-			if (dup_input(cmd, i))
-				return (1);
-		}
-		i = 0;
-		j++;
-	}
-	ft_tabdel(&cmd);
-	return (0);
-}
-
-int		get_proc(int sign)
-{
-	static int val = 2;
-
-	if (sign != 0)
-		val = sign;
-	return (val);
-}
-
-
 void kill_procs(int sig)
 {
 	if (sig == SIGINT)
@@ -433,6 +135,15 @@ void kill_procs(int sig)
 			ft_putchar('\n');
 		}
 	}
+}
+
+int		get_proc(int sign)
+{
+	static int val = 2;
+
+	if (sign != 0)
+		val = sign;
+	return (val);
 }
 
 static void reset_fd(t_data *data)
@@ -471,10 +182,7 @@ static int enter_builtin(t_data *data, t_env **s_env, char *stin, t_line *line)
 			(data->rvalue = builtin(line->proc, s_env, stin, data)))
 	{
 		if (line->next)
-		{
 			_exit(data->rvalue);
-		waitpid(-1, NULL, WNOHANG);
-		}
 		else
 		{
 			reset_fd(data);

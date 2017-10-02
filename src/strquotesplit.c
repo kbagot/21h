@@ -6,13 +6,13 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/22 18:35:32 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/19 16:43:27 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/02 20:36:21 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-static int	f_l(char const *str, int i, char *c)
+static int	fl(char const *str, int i, char *c)
 {
 	int lettre;
 	int quote;
@@ -31,7 +31,7 @@ static int	f_l(char const *str, int i, char *c)
 	return (lettre);
 }
 
-static int	f_m(char const *str, char *c)
+static int	fm(char const *str, char *c)
 {
 	int i;
 	int mot;
@@ -86,7 +86,7 @@ char		**strquotesplit(char const *s, char *c)
 	t_split	*stk;
 	char	**split;
 
-	if (s == NULL || (split = malloc(sizeof(char*) * (f_m(s, c) + 1))) == NULL)
+	if (s == NULL || (split = malloc(sizeof(char*) * (fm(s, c) + 1))) == NULL)
 		return (NULL);
 	stk = ft_memalloc(sizeof(t_split));
 	init_splt(stk, s, c);
@@ -99,7 +99,7 @@ char		**strquotesplit(char const *s, char *c)
 			stk->k = 0;
 			stk->quote = 0;
 			if ((split[stk->j] = malloc(sizeof(char) *
-							(f_l(s, stk->i, c) + 1))) == NULL)
+							(fl(s, stk->i, c) + 1))) == NULL)
 				return (NULL);
 			stock(stk, s, c, split);
 			split[stk->j++][stk->k++] = '\0';

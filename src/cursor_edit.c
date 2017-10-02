@@ -6,27 +6,11 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/21 18:27:12 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 17:53:34 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/02 20:26:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
-
-int			move_cursor(t_data *data, char *stin, char *buff)
-{
-	if (buff[2] == data->a->kr_s[2] && stin &&
-			data->cursor < (int)ft_strlen(stin))
-	{
-		move_right(data);
-		return (0);
-	}
-	else if (buff[2] == data->a->kl_s[2] && data->cursor > 0)
-	{
-		move_left(data);
-		return (0);
-	}
-	return (1);
-}
 
 static void	print_hist(char **stin, t_data *data)
 {

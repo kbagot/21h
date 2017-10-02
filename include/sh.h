@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/27 14:47:06 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/02 21:10:39 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,5 +152,19 @@ void				kill_procs(int sig);
 int					get_proc(int sign);
 int					move_cursor(t_data *data, char *stin, char *buff);
 void				save_fd(t_data *data);
+void				show_prompt(t_env *s_env, t_data *data);
+void				creat_heredoc(t_data *d, char **s);
+int					parse_error(char **stin);
+void				init_l_edit(t_edit *e, t_data *data);
+char				*end_line(t_data *data, t_edit *e);
+int					conform_quote(char *s);
+char				*conform(char *stin);
+void				paste(t_data *data, char **stin);
+char				*delete_one(char *stin, t_data *data);
+void				add_history(char *cmd, t_data *data);
+int					f_l(char const *str, int i, char *c);
+int					f_m(char const *str, char *c);
+int					exec_redir(char **rdr, t_data *d);
+t_line				*split_pipe(char **cstin);
 
 #endif
