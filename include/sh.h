@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 21:10:39 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/03 16:50:30 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,5 +166,6 @@ int					f_l(char const *str, int i, char *c);
 int					f_m(char const *str, char *c);
 int					exec_redir(char **rdr, t_data *d);
 t_line				*split_pipe(char **cstin);
+int					exec_exit(char **cstin, t_data *data, char *stin);
 
 #endif

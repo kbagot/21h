@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/09/21 17:53:02 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/03 18:08:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ static void	standout_move(t_data *data, char *stin, char *buff)
 		if (data->col != data->scr_col)
 			tputs(data->a->le_s, 1, print);
 	}
-	if (buff[2] == 'C' && data->col == data->scr_col && data->cursor < (int)ft_strlen(stin))
+	if (buff[2] == 'C' && data->col == data->scr_col &&
+			data->cursor < (int)ft_strlen(stin))
 	{
 		tputs(data->a->do_s, 1, print);
 		data->cursor++;
@@ -55,7 +56,7 @@ static void	cut(t_data *data, char **stin, int ce)
 		{
 			data->clipboard = ft_strsub(*stin, data->cursor,
 					ce - data->cursor + 1);
-			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]); 
+			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]);
 			//stin leaks
 		}
 		else if (ce < data->cursor)
@@ -70,8 +71,8 @@ static void	cut(t_data *data, char **stin, int ce)
 void	cleaner(t_data *data)
 {
 	int ll;
-	ll = 0;
 
+	ll = 0;
 	act_pos(data);
 	ll = data->scr_col - data->col + 1;
 	while (ll != 0)
