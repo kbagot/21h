@@ -167,5 +167,6 @@ int					f_m(char const *str, char *c);
 int					exec_redir(char **rdr, t_data *d);
 t_line				*split_pipe(char **cstin);
 int					exec_exit(char **cstin, t_data *data, char *stin);
+void				exec_utility(char **env, char **stin, t_data *data);
 
 #endif

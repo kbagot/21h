@@ -64,7 +64,6 @@ static int	parse_token(char **stin)
 int		parse_error(char **stin)
 {//TOKEN
 	int		i;
-	int		j;
 	char	**tmp;
 
 	i = 0;
@@ -78,7 +77,6 @@ int		parse_error(char **stin)
 			ft_tabdel(&tmp);
 			return (0);
 		}
-		j = 0;
 		if (parse_token(tmp))
 		{
 			ft_tabdel(&tmp);

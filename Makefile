@@ -17,7 +17,8 @@ I_FILES = main.c exec_utility.c utility.c builtin.c echo.c env.c tools.c \
 		  cursor_edit.c copy_cut.c line_edit_add.c move_by_word.c \
 		  strquotesplit.c splitforquote.c splitforquote_tools.c cursor_move.c \
 		  heredoc.c line_edit_cadd.c line_edit_parsing.c line_edit_init.c \
-		  parse_token.c show_prompt.c redirection.c exec_parsing.c builtin_cd.c
+		  parse_token.c show_prompt.c redirection.c exec_parsing.c \
+		  builtin_exit.c exec_cmd.c
 L_FILES = $(I_FILES:.c=.o)
 O_FILES = $(addprefix objects/, $(L_FILES))
 C_FILES = $(addprefix src/, $(I_FILES))

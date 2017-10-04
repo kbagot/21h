@@ -99,13 +99,11 @@ void		show_prompt(t_env *s_env, t_data *data)
 	char	*stin;
 	t_env	*search;
 	char	**septin;
-	int		i;
 
 	search = NULL;
 	stin = NULL;
 	while (42)
 	{
-		i = 0;
 		printf_prompt(search, s_env);
 		signal(SIGINT, prompt);
 		stin = line_edit(data);
