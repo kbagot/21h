@@ -6,7 +6,7 @@
 #    By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/17 17:47:06 by kbagot            #+#    #+#              #
-#    Updated: 2017/10/03 16:29:51 by kbagot           ###   ########.fr        #
+#    Updated: 2017/10/05 16:48:33 by kbagot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ I_FILES = main.c exec_utility.c utility.c builtin.c echo.c env.c tools.c \
 		  strquotesplit.c splitforquote.c splitforquote_tools.c cursor_move.c \
 		  heredoc.c line_edit_cadd.c line_edit_parsing.c line_edit_init.c \
 		  parse_token.c show_prompt.c redirection.c exec_parsing.c \
-		  builtin_exit.c exec_cmd.c
+		  builtin_exit.c exec_cmd.c exec_fork_pipe.c line_edit_tools.c
 L_FILES = $(I_FILES:.c=.o)
 O_FILES = $(addprefix objects/, $(L_FILES))
 C_FILES = $(addprefix src/, $(I_FILES))

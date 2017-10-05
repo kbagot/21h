@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 17:23:22 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 17:57:12 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 14:44:38 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void		show_prompt(t_env *s_env, t_data *data)
 		if (parse_error(septin) && stin) // token
 			one_by_one(septin, data, s_env);
 		signal(SIGINT, nkill_procs);
-		//kill(0, SIGINT);
+		kill(0, SIGINT);
 		ft_tabdel(&septin);
 		ft_strdel(&stin);
 	}

@@ -6,56 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 21:10:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 16:31:58 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-static t_line	*fork_pipes(t_line *line, t_data *d)
-{
-	t_line *old;
-	pid_t	pid;
-	int		fd[2];
-
-	pid = 0;
-	if (line)
-	{
-		while (line->next)
-		{
-			pipe(fd);
-			d->out = fd[1];
-			if ((pid = fork()) == 0)
-			{
-				if (d->in != 0)
-				{
-					dup2(d->in, 0);
-					close(d->in);
-				}
-				if (d->out != 1)
-				{
-					dup2(d->out, 1);
-					close(d->out);
-				}
-				return (line);
-			}
-			d->lastpid = pid;
-			close(d->out);
-			d->in = fd[0];
-			old = line;
-			line = line->next;
-			ft_tabdel(&old->proc);
-			ft_tabdel(&old->redirect);
-			ft_memdel((void**)&old);
-		}
-		if (d->in != 0)
-			dup2(d->in, 0);
-	}
-	return (line);
-
-}
-
-static void reset_fd(t_data *data)
+static void	reset_fd(t_data *data)
 {
 	dup2(data->stdin_cpy, 0);
 	close(data->stdin_cpy);
@@ -63,16 +20,9 @@ static void reset_fd(t_data *data)
 	close(data->stdout_cpy);
 	dup2(data->stderr_cpy, 2);
 	close(data->stderr_cpy);
-	//	ft_printf("%d %d %d \n", data->in , data->out, data->err); Should keep it ?
-	//	if (data->in != 0)
-	//		close (data->in);
-	//	if (data->out != 1)
-	//		close (data->out);
-	//	if (data->err != 2)
-	//		close (data->err);
 }
 
-static int enter_builtin(t_data *data, t_env **s_env, char *stin, t_line *line)
+static int	enter_builtin(t_data *data, t_env **s_env, char *stin, t_line *line)
 {
 	if ((data->rvalue = exec_redir(line->redirect, data)) ||
 			(data->rvalue = builtin(line->proc, s_env, stin, data)))
@@ -104,8 +54,8 @@ static void	enter_utility(t_data *data, t_env **s_env, t_line *line)
 void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 {
 	t_line	*line;
-	int status;
-	int pid;
+	int		status;
+	int		pid;
 
 	line = split_pipe(cstin);
 	line = fork_pipes(line, data);
@@ -113,9 +63,9 @@ void		parse_entry(t_env **s_env, char **cstin, char *stin, t_data *data)
 		enter_utility(data, s_env, line);
 	else
 	{
-	while ((pid = wait(&status)) > 0)
-		status = 0;
-	reset_fd(data);
+		while ((pid = wait(&status)) > 0)
+			status = 0;
+		reset_fd(data);
 		ft_tabdel(&line->proc);
 		ft_tabdel(&line->redirect);
 		ft_memdel((void**)&line);

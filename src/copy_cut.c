@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/03 18:08:23 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 17:51:50 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,60 +51,42 @@ static void	cut(t_data *data, char **stin, int ce)
 	tmp = *stin;
 	if (*stin)
 	{
-		ft_strdel(&data->clipboard);//check if good free
+		ft_strdel(&data->clipboard);
 		if (ce >= data->cursor)
 		{
 			data->clipboard = ft_strsub(*stin, data->cursor,
 					ce - data->cursor + 1);
-			*stin = ft_strjoin(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1]);
-			//stin leaks
+			*stin = join(ft_strsub(tmp, 0, data->cursor), &tmp[ce + 1], "");
 		}
 		else if (ce < data->cursor)
 		{
 			data->clipboard = ft_strsub(*stin, ce, data->cursor - ce + 1);
-			*stin = ft_strjoin(ft_strsub(tmp, 0, ce), &tmp[data->cursor]); //stin leaks
+			*stin = join(ft_strsub(tmp, 0, ce), &tmp[data->cursor], "");
 		}
 		ft_strdel(&tmp);
 	}
 }
 
-void	cleaner(t_data *data)
+static int	copy_cut_key(char *buff, t_data *data, char **stin, int ce)
 {
-	int ll;
-
-	ll = 0;
-	act_pos(data);
-	ll = data->scr_col - data->col + 1;
-	while (ll != 0)
-	{
-		tputs(data->a->dc_s, 1, print);
-		ll--;
-	}
-	if (data->row != data->scr_row)
-	{
-		while (data->row != data->scr_row)
+		if (buff[0] == 27 && buff[1] == 91)//arrow
 		{
-			act_pos(data);
-			if (data->row != data->scr_row)
-				tputs(data->a->do_s, 1, print);
-			tputs(data->a->dl_s, 1, print);
+			standout_move(data, *stin, buff);
+			return (0);
 		}
-	}
-}
-
-void	reset_line(t_data *data, char *stin)
-{
-	int cursor;
-	tputs(data->a->se_s, 1, print);
-	cursor = data->cursor;
-	if (stin)
-	{
-		go_home(data);
-		ft_printf("%s ", stin);
-		cleaner(data);
-	}
-	data->cursor = cursor;
-	tputs(data->a->rc_s, 1, print);
+		else if (buff[0] == 21 && buff[1] == 0)// copy  |   CTRL + U
+		{
+			copy(data, *stin, ce);
+			reset_line(data, *stin);
+		}
+		else if (buff[0] == 11 && buff[1] == 0)// cut       |      CTRL + K
+		{
+			cut(data, stin, ce);
+			reset_line(data, *stin);
+		}
+		else if (buff[0] == 27 && buff[1] == 0)//echap
+			reset_line(data, *stin);
+		return (1);
 }
 
 void		copy_cut(t_data *data, char **stin, char *buff)
@@ -119,25 +101,8 @@ void		copy_cut(t_data *data, char **stin, char *buff)
 		act_pos(data);
 		ft_bzero(buff, 6);
 		read(0, buff, 5);
-		if (buff[0] == 27 && buff[1] == 91)//arrow
-			standout_move(data, *stin, buff);
-		else if (buff[0] == 21 && buff[1] == 0)// copy  |   CTRL + U
-		{
-			copy(data, *stin, ce);
-			reset_line(data, *stin);
+		if (copy_cut_key(buff, data, stin, ce))
 			break ;
-		}
-		else if (buff[0] == 11 && buff[1] == 0)// cut       |      CTRL + K
-		{
-			cut(data, stin, ce);
-			reset_line(data, *stin);
-			break ;
-		}
-		else if (buff[0] == 27 && buff[1] == 0)//echap
-		{
-			reset_line(data, *stin);
-			break ;
-		}
 	}
 	int t;
 	if (ce > data->cursor)
