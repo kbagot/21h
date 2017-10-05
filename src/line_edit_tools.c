@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/05 16:47:45 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 18:03:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 18:48:07 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,12 @@ void	cleaner(t_data *data)
 	if (data->row != data->scr_row)
 	{
 		tputs(data->a->do_s, 1, print);
-		while (data->row < data->scr_row)
+		while (data->row != data->scr_row)
 		{
 			tputs(data->a->dl_s, 1, print);
 			data->row++;
 		}
 	}
-	act_pos(data);
 }
 
 void	reset_line(t_data *data, char *stin)

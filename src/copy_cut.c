@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 17:51:50 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 18:46:27 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,18 +104,6 @@ void		copy_cut(t_data *data, char **stin, char *buff)
 		if (copy_cut_key(buff, data, stin, ce))
 			break ;
 	}
-	int t;
-	if (ce > data->cursor)
-	{
-		t = ce - data->cursor;
-		data->cursor = ce;
-		while (t > 0)
-		{
-			move_left(data);
-			t--;
-		}
-	}
-	else
-		data->cursor = ce;
+	data->cursor = ce;
 	tputs(data->a->se_s, 1, print);
 }

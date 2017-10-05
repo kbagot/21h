@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 20:34:39 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/05 18:51:00 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	l_edit_1(char *buff, char **stin, t_data *data)
 	else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)//c mode ctrl+u k
 		copy_cut(data, stin, buff);
 	else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
-		paste(data, stin);
+	{		paste(data, stin);sleep(3);}
 	else
 		return (1);
 	return (0);
