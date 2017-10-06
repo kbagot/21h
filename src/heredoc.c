@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 17:34:09 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/03 17:26:21 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 18:23:57 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,36 +14,34 @@
 
 static void	heredoc(t_data *d, char **s, int j, int i)
 {
-	char *line;
-	//	int up;
-	int fd[2];
+	char	*line;
+	char	*tmp;
+	int		fd[2];
 
-	pipe(fd); // save fd ,  he use reserved fd
-	//	if (j != 0)
-	//		up = ft_atoi(*s);
-	//	else
-	//		up = 0;
+	pipe(fd);
 	ft_putstr("> ");
-	//	printf("%s\n", cmd[i]);
 	while (42)
 	{
 		line = line_edit(d);
 		if (line && (!ft_strcmp(line, s[i + 1]) || !ft_strcmp(line, "exit")))
+		{
+			ft_strdel(&line);
 			break ;
+		}
 		ft_putstr_fd(line, fd[1]);
 		ft_putchar_fd('\n', fd[1]);
 		ft_strdel(&line);
 		ft_putstr("> ");
 	}
 	close(fd[1]);
-	s[i] = ft_strjoin(ft_strsub(s[i], 0, j), "&");
+	tmp = s[i];
+	s[i] = join(ft_strsub(s[i], 0, j), "&", "");
+	ft_strdel(&tmp);
+	ft_strdel(&s[i + 1]);
 	s[i + 1] = ft_itoa(fd[0]);
-	//	printf("%s\n", s[i]);
-	//dup2(fd[0], up);
-	//close(fd[0]);
 }
 
-void	creat_heredoc(t_data *d, char **s)
+void		creat_heredoc(t_data *d, char **s)
 {
 	int i;
 	int j;
@@ -61,10 +59,9 @@ void	creat_heredoc(t_data *d, char **s)
 			{
 				if (!ft_strncmp(&s[i][j], "<<", 2))
 					heredoc(d, s, j + 1, i);
-				//	printf("%s\n", s[i]);}
 				j++;
 			}
-		i++;
+			i++;
 		}
 	}
 }

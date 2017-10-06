@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/25 17:16:39 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 17:34:20 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 18:04:24 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,24 +71,24 @@ static void	cut(t_data *data, char **stin, int *ce)
 
 static int	copy_cut_key(char *buff, t_data *data, char **stin, int *ce)
 {
-	if (buff[0] == 27 && buff[1] == 91)//arrow
+	if (buff[0] == 27 && buff[1] == 91)
 	{
 		standout_move(data, *stin, buff);
 		return (0);
 	}
-	else if (buff[0] == 21 && buff[1] == 0)// copy  |   CTRL + U
+	else if (buff[0] == 21 && buff[1] == 0)
 	{
 		copy(data, *stin, *ce);
 		reset_line(data, *stin);
 		return (1);
 	}
-	else if (buff[0] == 11 && buff[1] == 0)// cut       |      CTRL + K
+	else if (buff[0] == 11 && buff[1] == 0)
 	{
 		cut(data, stin, ce);
 		reset_line(data, *stin);
 		return (1);
 	}
-	else if (buff[0] == 27 && buff[1] == 0)//echap
+	else if (buff[0] == 27 && buff[1] == 0)
 	{
 		reset_line(data, *stin);
 		return (1);

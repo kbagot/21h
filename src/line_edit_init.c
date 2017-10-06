@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 18:00:01 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 14:53:51 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 19:38:22 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void	load_ansi(t_data *data)
 	data->a->so_s = tgetstr("so", NULL);
 }
 
-void	init_l_edit(t_edit *e, t_data *data)
+void		init_l_edit(t_edit *e, t_data *data)
 {
 	e->ler = 0;
 	e->stin = NULL;
@@ -46,11 +46,10 @@ void	init_l_edit(t_edit *e, t_data *data)
 	data->start_col = data->col;
 }
 
-char	*end_line(t_data *data, t_edit *e)
+char		*end_line(t_data *data, t_edit *e)
 {
 	char *ret;
 
-	//tputs(tgetstr("ei", NULL), 1, print);
 	ret = NULL;
 	if (e->stin)
 		ret = ft_strdup(e->stin);
@@ -58,7 +57,7 @@ char	*end_line(t_data *data, t_edit *e)
 	ft_strdel(&e->stin);
 	free(e);
 	reset_term(data);
-	return(ret);
+	return (ret);
 }
 
 void		act_pos(t_data *d)
@@ -82,7 +81,6 @@ void		act_pos(t_data *d)
 		ansi = ft_strjoin(tmp, buff);
 		ft_strdel(&tmp);
 	}
-	//ft_printf("[%s | %s]", &ansi[2], &ft_strchr(&ansi[2], ';')[1]);
 	d->row = ft_atoi(&ansi[2]);
 	d->col = ft_atoi(&ft_strchr(&ansi[2], ';')[1]);
 	ft_strdel(&buff);

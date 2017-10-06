@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 21:10:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 18:23:25 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-extern int g_signo;
+extern int	g_signo;
 
 static int	invalid_exec(char **stin, char **env, t_data *data)
 {
@@ -53,7 +53,19 @@ static void	sig(int rvalue, pid_t pid, char *stin)
 	}
 }
 
-void	exec_utility(char **env, char **stin, t_data *data)
+static void	status(pid_t pid, int rvalue, t_data *data, char **stin)
+{
+	g_signo = pid;
+	wait(&rvalue);
+	if (data->lastpid != 0)
+		kill(data->lastpid, SIGTERM);
+	if (WIFEXITED(rvalue))
+		data->rvalue = WEXITSTATUS(rvalue);
+	else if (WIFSIGNALED(rvalue))
+		sig(rvalue, pid, stin[0]);
+}
+
+void		exec_utility(char **env, char **stin, t_data *data)
 {
 	pid_t	pid;
 	int		rvalue;
@@ -70,15 +82,6 @@ void	exec_utility(char **env, char **stin, t_data *data)
 		}
 	}
 	else if (pid > 0)
-	{
-		g_signo = pid;
-		wait(&rvalue);
-		if (data->lastpid != 0)
-			kill(data->lastpid, SIGTERM);
-		if (WIFEXITED(rvalue))
-			data->rvalue = WEXITSTATUS(rvalue);
-		else if (WIFSIGNALED(rvalue))
-			sig(rvalue, pid, stin[0]);
-	}
+		status(pid, rvalue, data, stin);
 	ft_tabdel(&env);
 }

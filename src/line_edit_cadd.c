@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 20:13:41 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 20:22:49 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 19:36:00 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char	*delete_one(char *stin, t_data *data)
 	else
 	{
 		tmp = ft_strsub(stin, 0, data->cursor - 1);
-		stin = ft_strjoin(tmp, &stin[data->cursor]); //stin leaks
+		stin = ft_strjoin(tmp, &stin[data->cursor]);
 		ft_strdel(&old);
 		ft_strdel(&tmp);
 	}

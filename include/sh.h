@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 16:12:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 20:36:03 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,5 +169,6 @@ t_line				*split_pipe(char **cstin);
 int					exec_exit(char **cstin, t_data *data, char *stin);
 void				exec_utility(char **env, char **stin, t_data *data);
 t_line				*fork_pipes(t_line *line, t_data *d);
+void				separate_line(char **cstin, int *i, t_line *line);
 
 #endif
