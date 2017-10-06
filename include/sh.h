@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 15:10:56 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 16:12:41 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void				arrow_key(t_data *data, char **stin, char *buff);
 int					print(int c);
 void				copy_cut(t_data *data, char **stin, char *buff);
 void				writer(t_data *data, char **stin, char *buff);
-void				move_by_word(t_data *data, char *stin, char *buff);
+void				move_by_word_line(t_data *data, char *stin, char *buff);
 char				**strquotesplit(char const *s, char *c);
 char				**splitforquote(char const *s, char *c);
 void				act_pos(t_data *d);

@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 22:15:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 17:10:11 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ static int	l_edit_1(char *buff, char **stin, t_data *data)
 {
 	if (buff[0] == 27 && buff[1] == 91)//arrow
 		arrow_key(data, stin, buff);
-	else if (buff[0] == 6 || buff[0] == 2)// ctrl + F  ctr+B
-		move_by_word(data, *stin, buff);
+	else if (buff[0] == 6 || buff[0] == 2 || buff[0] == 19 || buff[0] == 24)// ctrl + F  ctr+B
+		move_by_word_line(data, *stin, buff);
 	else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)//c mode ctrl+u k
 		copy_cut(data, stin, buff);
 	else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
@@ -29,6 +29,8 @@ static int	l_edit_1(char *buff, char **stin, t_data *data)
 
 static int	l_edit_2_enterkey(char **stin, char *buff, t_edit *e, t_data *data)
 {
+	if (*stin)
+		go_end(data, *stin);
 	if (get_proc(0) == 1)
 	{
 		ft_strdel(stin);
@@ -101,9 +103,9 @@ char		*line_edit(t_data *data)
 		act_pos(data);
 		//if (e->stin)
 		//		data->line_count = ((int)ft_strlen(e->stin) + data->start_col - 1) / data->scr_col;
-		ft_bzero(e->buff, 6);
-		read(0, e->buff, 5);
-		//ft_printf("{%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4]);ft_printf("%s\n", e->buff);
+		ft_bzero(e->buff, 7);
+		read(0, e->buff, 6);
+		//ft_printf("{%d-%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4], e->buff[5]);ft_printf("%s\n", e->buff);
 		if (l_edit_1(e->buff, &e->stin, data))
 		{
 			if ((e->ler = l_edit_2(e->buff, &e->stin, e, data)) || e->ler == 2)

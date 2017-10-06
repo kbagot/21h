@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/24 16:58:48 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/03 16:50:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 16:17:15 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static int	exec_help(void)
 	ft_putstr("Cut selection [CTRL+K]\nCopy selection [CTRL+U]");
 	ft_putstr("\nLeave mode [ESC]\nPaste [CTRL+P]\n\n");
 	ft_putstr("Move by word left [CTRL+F]\nMove by word right [CTRL+B]\n");
+	ft_putstr("Move by line up [CTRL+S]\nMove by line down [CTRL+X]\n");
 	return (1);
 }
 
