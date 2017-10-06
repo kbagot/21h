@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/17 14:36:14 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 17:53:30 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 21:12:09 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-static void		ms_dat(t_env *new_env, char **env, int i, int j)
+static void	ms_dat(t_env *new_env, char **env, int i, int j)
 {
 	if ((ft_strcmp(new_env->name, "SHELL")) == 0)
 		new_env->value = ft_strdup("~/Documents/Projet/minishell/minishell");
@@ -20,7 +20,7 @@ static void		ms_dat(t_env *new_env, char **env, int i, int j)
 		new_env->value = ft_strsub(env[i], j + 1, ft_strlen(env[i]) - j);
 }
 
-t_env			*env_build(char **env, t_env *first_env)
+t_env		*env_build(char **env, t_env *first_env)
 {
 	t_env	*bef_env;
 	t_env	*new_env;
@@ -49,7 +49,7 @@ t_env			*env_build(char **env, t_env *first_env)
 	return (first_env);
 }
 
-static void init_data(t_data *data)
+static void	init_data(t_data *data)
 {
 	data->a = ft_memalloc(sizeof(t_ansi));
 	data->lastpid = 0;
@@ -57,7 +57,7 @@ static void init_data(t_data *data)
 	data->hist = NULL;
 }
 
-int				main(int ac, char **av, char **env)
+int			main(int ac, char **av, char **env)
 {
 	t_env	*s_env;
 	char	*tmp;

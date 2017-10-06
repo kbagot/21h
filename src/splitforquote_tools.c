@@ -6,13 +6,13 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 20:31:32 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 20:33:57 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 22:18:41 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-int	f_l(char const *str, int i, char *c)
+int			f_l(char const *str, int i, char *c)
 {
 	int letter;
 	int quote;
@@ -51,7 +51,7 @@ static void	f_mnorm(int *quote, int *i, int *mot, char const *str)
 	*mot += 1;
 }
 
-int	f_m(char const *str, char *c)
+int			f_m(char const *str, char *c)
 {
 	int i;
 	int mot;

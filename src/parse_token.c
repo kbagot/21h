@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 17:54:21 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 17:56:46 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 21:47:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ static int	parse_token(char **stin)
 	return (0);
 }
 
-int		parse_error(char **stin)
-{//TOKEN
+int			parse_error(char **stin)
+{
 	int		i;
 	char	**tmp;
 
@@ -70,7 +70,7 @@ int		parse_error(char **stin)
 	tmp = NULL;
 	while (stin && stin[i])
 	{
-		tmp = strmsplit(stin[i], " \t\n");// obselete
+		tmp = strmsplit(stin[i], " \t\n");
 		if (!tmp[0] && stin[i + 1])
 		{
 			ft_putstr_fd("21sh: syntax error near unexpected token `;'\n", 2);

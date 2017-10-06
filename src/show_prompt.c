@@ -6,15 +6,15 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 17:23:22 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 14:44:38 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 22:17:50 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-int g_signo = 0;
+int			g_signo = 0;
 
-static	void prompt(int sig)
+static void	prompt(int sig)
 {
 	char buf[2];
 
@@ -27,16 +27,7 @@ static	void prompt(int sig)
 	}
 }
 
-static void nkill_procs(int sig)
-{
-	if (sig == SIGINT)
-	{
-		if (g_signo > 0)
-			kill(g_signo, 9);
-	}
-}
-
-static void		set(char **str, t_env *env)
+static void	set(char **str, t_env *env)
 {
 	t_env	*search;
 	int		i;
@@ -62,7 +53,6 @@ static void		set(char **str, t_env *env)
 	}
 }
 
-
 static void	one_by_one(char **septin, t_data *data, t_env *s_env)
 {
 	char	**cstin;
@@ -84,7 +74,7 @@ static void	one_by_one(char **septin, t_data *data, t_env *s_env)
 	}
 }
 
-static void printf_prompt(t_env *search, t_env *s_env)
+static void	printf_prompt(t_env *search, t_env *s_env)
 {
 	if ((search = search_env(s_env, "PWD")) &&
 			ft_strchr(search->value, '/'))
@@ -108,11 +98,9 @@ void		show_prompt(t_env *s_env, t_data *data)
 		signal(SIGINT, prompt);
 		stin = line_edit(data);
 		signal(SIGINT, kill_procs);
-		septin = strquotesplit(stin, ";");//use stin fot history
-		if (parse_error(septin) && stin) // token
+		septin = strquotesplit(stin, ";");
+		if (parse_error(septin) && stin)
 			one_by_one(septin, data, s_env);
-		signal(SIGINT, nkill_procs);
-		kill(0, SIGINT);
 		ft_tabdel(&septin);
 		ft_strdel(&stin);
 	}

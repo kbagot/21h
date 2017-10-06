@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/22 18:35:32 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 20:36:21 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 22:20:22 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,3 @@ char		**strquotesplit(char const *s, char *c)
 	free(stk);
 	return (split);
 }
-
-/*
-   int main(int ac, char **av)
-   {
-   ft_printf("SALUT\n");
-   char **lol;if (ac == 2){	lol = strquotesplit(av[1], ";");if(lol)while(*lol){printf("[%s]\n", *lol);lol++;}}return (0);
-   }*/

@@ -6,14 +6,14 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 21:02:13 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/02 21:06:18 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 22:19:47 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
 static void	redir_output(char **cmd, t_data *d, int i)
-{//  >
+{
 	int up;
 
 	if (i != 1)

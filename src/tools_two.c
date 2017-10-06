@@ -6,13 +6,13 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/03 16:56:01 by kbagot            #+#    #+#             */
-/*   Updated: 2017/04/27 14:42:23 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 22:19:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "sh.h"
 
-void	save_fd(t_data *data)
+void		save_fd(t_data *data)
 {
 	data->stdin_cpy = 10;
 	data->stdout_cpy = 11;
@@ -25,7 +25,7 @@ void	save_fd(t_data *data)
 	data->err = STDERR_FILENO;
 }
 
-void	destroy_env(t_env **env)
+void		destroy_env(t_env **env)
 {
 	t_env *search;
 
@@ -41,9 +41,9 @@ void	destroy_env(t_env **env)
 		}
 }
 
-extern int g_signo;
+extern int	g_signo;
 
-void kill_procs(int sig)
+void		kill_procs(int sig)
 {
 	if (sig == SIGINT)
 	{
@@ -55,7 +55,7 @@ void kill_procs(int sig)
 	}
 }
 
-int		get_proc(int sign)
+int			get_proc(int sign)
 {
 	static int val = 2;
 

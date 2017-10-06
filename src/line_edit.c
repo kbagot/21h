@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 17:10:11 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/06 21:11:42 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 static int	l_edit_1(char *buff, char **stin, t_data *data)
 {
-	if (buff[0] == 27 && buff[1] == 91)//arrow
+	if (buff[0] == 27 && buff[1] == 91)
 		arrow_key(data, stin, buff);
-	else if (buff[0] == 6 || buff[0] == 2 || buff[0] == 19 || buff[0] == 24)// ctrl + F  ctr+B
+	else if (buff[0] == 6 || buff[0] == 2 || buff[0] == 19 || buff[0] == 24)
 		move_by_word_line(data, *stin, buff);
-	else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)//c mode ctrl+u k
+	else if ((buff[0] == 25 || buff[0] == 11) && buff[1] == 0)
 		copy_cut(data, stin, buff);
-	else if (buff[0] == 16 && buff[1] == 0)// PASTE   CTRL+P
-			paste(data, stin);
+	else if (buff[0] == 16 && buff[1] == 0)
+		paste(data, stin);
 	else
 		return (1);
 	return (0);
@@ -38,14 +38,13 @@ static int	l_edit_2_enterkey(char **stin, char *buff, t_edit *e, t_data *data)
 	}
 	if (buff[0] == 12)
 		tputs(data->a->cl_s, 1, print);
-	if (buff[0] == 10 && conform_quote(*stin) != 0) //mutli line issue
+	if (buff[0] == 10 && conform_quote(*stin) != 0)
 		ft_putstr("\n> ");
 	else
 	{
 		if (buff[0] != 12)
 			ft_putchar('\n');
 		add_history(e->stin, data);
-		//end_line(data, *stin, buff);
 		*stin = conform(*stin);
 		return (1);
 	}
@@ -54,14 +53,13 @@ static int	l_edit_2_enterkey(char **stin, char *buff, t_edit *e, t_data *data)
 
 static int	l_edit_2(char *buff, char **stin, t_edit *e, t_data *data)
 {
-	if ((!stin || (stin && stin[0] == '\0')) && buff[0] == 4)//ctrl + d [make exit]
+	if ((!stin || (stin && stin[0] == '\0')) && buff[0] == 4)
 	{
 		ft_strdel(stin);
 		*stin = ft_strdup("exit");
-		//end_line(data, *stin, buff);
 		return (2);
 	}
-	else if (buff[0] == 10 || buff[0] == 12) // send enter / ctrl+L clear
+	else if (buff[0] == 10 || buff[0] == 12)
 	{
 		if (l_edit_2_enterkey(stin, buff, e, data))
 			return (2);
@@ -88,7 +86,7 @@ static void	l_edit_3(char *buff, char **stin, t_data *data)
 			data->cursor = m;
 		}
 	}
-	else if (ft_isprint(buff[0]) && buff[1] == '\0')//maybe allow only printable
+	else if (ft_isprint(buff[0]) && buff[1] == '\0')
 		writer(data, stin, buff);
 }
 
@@ -98,14 +96,11 @@ char		*line_edit(t_data *data)
 
 	e = ft_memalloc(sizeof(t_edit));
 	init_l_edit(e, data);
-	while (42)  // need \n
+	while (42)
 	{
 		act_pos(data);
-		//if (e->stin)
-		//		data->line_count = ((int)ft_strlen(e->stin) + data->start_col - 1) / data->scr_col;
 		ft_bzero(e->buff, 7);
 		read(0, e->buff, 6);
-		//ft_printf("{%d-%d-%d-%d-%d-%d}\n", e->buff[0], e->buff[1], e->buff[2], e->buff[3], e->buff[4], e->buff[5]);ft_printf("%s\n", e->buff);
 		if (l_edit_1(e->buff, &e->stin, data))
 		{
 			if ((e->ler = l_edit_2(e->buff, &e->stin, e, data)) || e->ler == 2)
@@ -117,6 +112,5 @@ char		*line_edit(t_data *data)
 		}
 	}
 	add_history(e->stin, data);
-	//end_line(data, e->stin, e->buff);// utility ??
 	return (end_line(data, e));
 }

@@ -6,12 +6,12 @@
 #    By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/01/17 17:47:06 by kbagot            #+#    #+#              #
-#    Updated: 2017/10/06 20:36:49 by kbagot           ###   ########.fr        #
+#    Updated: 2017/10/06 21:56:06 by kbagot           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = 21sh
-FLAGS = -g -Wall -Werror -Wextra -I include/ #-fsanitize=address
+FLAGS = -g -I include/ #-Wall -Werror -Wextra -fsanitize=address
 I_FILES = main.c exec_utility.c utility.c builtin.c echo.c env.c tools.c \
 		  tools_two.c builtin_exec_cd.c line_edit.c term_setting.c \
 		  cursor_edit.c copy_cut.c line_edit_add.c move_by_word.c \
