@@ -39,7 +39,7 @@ static void	conform_ctn(char **stin, int *i)
 {
 	if (!ft_strncmp(&stin[0][*i], ">&", 2))
 		make_conform(stin, i, 2, ">& ");
-	else if (!ft_strncmp(&stin[0][*i], "<", 1) && ft_strncmp(*(&stin[*i]), "<&", 2))
+	else if (!ft_strncmp(&stin[0][*i], "<", 1) && ft_strncmp(&stin[0][*i]), "<&", 2))
 		make_conform(stin, i, 1, "< ");
 	else if (!ft_strncmp(&stin[0][*i], "<&", 2))
 		make_conform(stin, i, 2, "<& ");
