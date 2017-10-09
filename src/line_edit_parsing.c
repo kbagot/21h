@@ -37,13 +37,13 @@ static void	make_conform(char **stin, int *i, int c, char *nst)
 
 static void	conform_ctn(char **stin, int *i)
 {
-	if (!ft_strncmp(stin[*i], ">&", 2))
+	if (!ft_strncmp(&stin[0][*i], ">&", 2))
 		make_conform(stin, i, 2, ">& ");
-	else if (!ft_strncmp(stin[*i], "<", 1) && ft_strncmp(stin[*i], "<&", 2))
+	else if (!ft_strncmp(&stin[0][*i], "<", 1) && ft_strncmp(*(&stin[*i]), "<&", 2))
 		make_conform(stin, i, 1, "< ");
-	else if (!ft_strncmp(stin[*i], "<&", 2))
+	else if (!ft_strncmp(&stin[0][*i], "<&", 2))
 		make_conform(stin, i, 2, "<& ");
-	else if (!ft_strncmp(stin[*i], ";", 1))
+	else if (!ft_strncmp(&stin[0][*i], ";", 1))
 		make_conform(stin, i, 1, "; ");
 }
 
@@ -51,7 +51,7 @@ static void	skip_quote(char *stin, int *i)
 {
 	int		quote;
 
-	if (stin && (stin[*i] == '\'' || stin[*i] == '\"'))
+	if (stin && stin[*i] && (stin[*i] == '\'' || stin[*i] == '\"'))
 	{
 		quote = *i;
 		*i += 1;
