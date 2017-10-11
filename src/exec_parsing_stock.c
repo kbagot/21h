@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/06 20:29:58 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 20:35:41 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 20:40:36 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ static void	stock_redir_fd(t_line *line, char **cstin, int *k, char *c)
 
 static void	stock_redir(char **cstin, t_line *line, int *j, int *k)
 {
-	char *c;
+	char	*c;
+	char	*nbr;
 
 	c = NULL;
 	if (!(c = ft_strchr(*cstin, '>')))
@@ -39,7 +40,7 @@ static void	stock_redir(char **cstin, t_line *line, int *j, int *k)
 	}
 	else
 	{
-		if (!ft_isnbr(ft_strsub(*cstin, 0, c - *cstin)))
+		if (!ft_isnbr((nbr = ft_strsub(*cstin, 0, c - *cstin))))
 		{
 			line->proc[*j] = ft_strsub(*cstin, 0, c - *cstin);
 			line->redirect[*k] = join(ft_strdup(&cstin[0][c - *cstin]), " ",
@@ -49,6 +50,7 @@ static void	stock_redir(char **cstin, t_line *line, int *j, int *k)
 		}
 		else
 			stock_redir_fd(line, cstin, k, c);
+		ft_strdel(&nbr);
 	}
 }
 
