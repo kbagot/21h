@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 18:08:49 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 21:46:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 17:00:41 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ static void	conform_ctn(char **stin, int *i)
 {
 	if (!ft_strncmp(&stin[0][*i], ">&", 2))
 		make_conform(stin, i, 2, ">& ");
-	else if (!ft_strncmp(&stin[0][*i], "<", 1) && ft_strncmp(&stin[0][*i]), "<&", 2))
+	else if (!ft_strncmp(&stin[0][*i], "<", 1) &&
+			ft_strncmp(&stin[0][*i], "<&", 2))
 		make_conform(stin, i, 1, "< ");
 	else if (!ft_strncmp(&stin[0][*i], "<&", 2))
 		make_conform(stin, i, 2, "<& ");

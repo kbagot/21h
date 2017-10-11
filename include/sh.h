@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/04/27 14:40:50 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 20:36:03 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 19:25:01 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 # include <paths.h>
 # include <limits.h>
 # include <sys/stat.h>
-# include <curses.h>// care order
-# include <term.h>//
+# include <curses.h>
+# include <term.h>
 # include <termcap.h>
 # include <termios.h>
 # include <sys/ioctl.h>
@@ -49,8 +49,8 @@ typedef struct		s_data
 	int				cursor;
 	char			*clipboard;
 	struct s_line	*line;
-	int 			in;
-	int 			out;
+	int				in;
+	int				out;
 	int				err;
 	int				stdin_cpy;
 	int				stdout_cpy;
@@ -80,7 +80,7 @@ typedef struct		s_ansi
 	char			*so_s;
 }					t_ansi;
 
-typedef struct		s_line // line piped
+typedef struct		s_line
 {
 	char			**proc;
 	char			**redirect;
@@ -99,6 +99,8 @@ typedef struct		s_edit
 	char	*buff;
 	char	*stin;
 	int		ler;
+	char	*q_save;
+	int		q_count;
 }					t_edit;
 
 typedef struct		s_split
@@ -164,11 +166,13 @@ char				*delete_one(char *stin, t_data *data);
 void				add_history(char *cmd, t_data *data);
 int					f_l(char const *str, int i, char *c);
 int					f_m(char const *str, char *c);
-int					exec_redir(char **rdr, t_data *d);
+int					make_redir(char **rdr, t_data *d);
 t_line				*split_pipe(char **cstin);
 int					exec_exit(char **cstin, t_data *data, char *stin);
 void				exec_utility(char **env, char **stin, t_data *data);
 t_line				*fork_pipes(t_line *line, t_data *d);
 void				separate_line(char **cstin, int *i, t_line *line);
+int					dup_in_out_put(char **cmd, int i, int std_fd);
+int					line_edit_qto_mngmt(char **stin, t_edit *d, t_data *data);
 
 #endif

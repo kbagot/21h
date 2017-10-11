@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 20:13:41 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 21:09:33 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 19:13:06 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ char	*delete_one(char *stin, t_data *data)
 
 void	add_history(char *cmd, t_data *data)
 {
-	if (cmd && data->hist == NULL)
+	if (cmd && data->hist == NULL && !ft_strchr(cmd, '\n'))
 	{
 		data->hist = ft_memalloc(sizeof(t_hist));
 		data->hist->elem = ft_strdup(cmd);
 		data->hist->next = NULL;
 		data->hist->before = NULL;
 	}
-	else if (cmd && data->hist)
+	else if (cmd && data->hist && !ft_strchr(cmd, '\n'))
 	{
 		while (data->hist->next)
 			data->hist = data->hist->next;

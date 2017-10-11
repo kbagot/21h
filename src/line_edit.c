@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/04 14:37:42 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 21:11:42 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 19:23:32 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,17 +36,21 @@ static int	l_edit_2_enterkey(char **stin, char *buff, t_edit *e, t_data *data)
 		ft_strdel(stin);
 		get_proc(2);
 	}
-	if (buff[0] == 12)
-		tputs(data->a->cl_s, 1, print);
-	if (buff[0] == 10 && conform_quote(*stin) != 0)
-		ft_putstr("\n> ");
-	else
+	if (buff[0] == 10 || buff[0] == 12)
 	{
-		if (buff[0] != 12)
-			ft_putchar('\n');
-		add_history(e->stin, data);
-		*stin = conform(*stin);
-		return (1);
+		if (buff[0] == 12 || line_edit_qto_mngmt(&(*stin), e, data))
+		{
+			if (buff[0] == 12)
+			{
+				tputs(data->a->cl_s, 1, print);
+				ft_strdel(&(*stin));
+			}
+			else if (buff[0] != 12)
+				ft_putchar('\n');
+			add_history(e->stin, data);
+			*stin = conform(*stin);
+			return (1);
+		}
 	}
 	return (0);
 }

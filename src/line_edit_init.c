@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 18:00:01 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 19:38:22 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/11 15:18:54 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ void		init_l_edit(t_edit *e, t_data *data)
 	e->ler = 0;
 	e->stin = NULL;
 	e->buff = ft_strnew(7);
+	e->q_save = NULL;
+	e->q_count = 0;
 	data->cursor = 0;
 	init_term(data);
 	load_ansi(data);

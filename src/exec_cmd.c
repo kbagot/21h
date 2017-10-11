@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 20:58:40 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/05 16:31:58 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/10 16:57:23 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	reset_fd(t_data *data)
 
 static int	enter_builtin(t_data *data, t_env **s_env, char *stin, t_line *line)
 {
-	if ((data->rvalue = exec_redir(line->redirect, data)) ||
+	if ((data->rvalue = make_redir(line->redirect, data)) ||
 			(data->rvalue = builtin(line->proc, s_env, stin, data)))
 	{
 		if (line->next)
