@@ -6,7 +6,7 @@
 /*   By: kbagot <kbagot@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/20 15:14:05 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 22:21:01 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/12 14:51:08 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char		**utility(char **st, t_env *s_env)
 	while (path && path[i])
 	{
 		path[i] = join(path[i], "/", st[0]);
-		if ((access(path[i], X_OK)) == 0)
+		if (path[i] && (access(path[i], X_OK)) == 0)
 		{
 			ft_strdel(&st[0]);
 			st[0] = ft_strdup(path[i]);

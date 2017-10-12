@@ -6,7 +6,7 @@
 /*   By: kbagot <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 17:54:21 by kbagot            #+#    #+#             */
-/*   Updated: 2017/10/06 21:47:23 by kbagot           ###   ########.fr       */
+/*   Updated: 2017/10/12 15:21:26 by kbagot           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 static int	parse_token_two(char **stin, int i)
 {
 	char	*c;
-
 	if (((c = ft_strchr(stin[i], '&')) && (c[1] != '<' && c[1] != '>') &&
 				(c - stin[i] > 0 && c[-1] != '<' && c[-1] != '>')) ||
 			(!ft_strcmp(stin[i], "<<") && !stin[i + 1]))
@@ -27,14 +26,15 @@ static int	parse_token_two(char **stin, int i)
 			ft_putstr_fd(" `&'\n", 2);
 		return (1);
 	}
-	else if ((!ft_strcmp(stin[i], "|") && !ft_strcmp(stin[i + 1], "|")) ||
-			(!ft_strcmp(stin[i], "&")))
+	else if ((!ft_strcmp(stin[i], "|") || !ft_strcmp(stin[i], ">")) && ((!ft_strcmp(stin[i + 1], "|")) ||
+			(!ft_strcmp(stin[i], "&"))))
 	{
 		ft_putstr_fd("21sh: syntax error near unexpected token", 2);
 		if (stin[i][0] == '|')
-			ft_putstr_fd(" `|'\n", 2);
+			ft_putstr_fd(" `|'", 2);
 		else if (stin[i][0] == '&')
-			ft_putstr_fd(" `&'\n", 2);
+			ft_putstr_fd(" `&'", 2);
+		ft_putstr_fd("\n", 2);
 		return (1);
 	}
 	return (0);
